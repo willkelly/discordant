@@ -5,7 +5,7 @@
  */
 
 import { writable } from 'svelte/store';
-import type { Modal, Notification, Toast } from '../types/ui';
+import type { Modal, Notification, Toast } from '../types/ui.ts';
 import { defaultTheme } from '../styles/theme';
 
 export type AppViewType = 'login' | 'conversations' | 'chat' | 'contacts' | 'settings' | 'profile' | 'call';

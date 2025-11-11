@@ -5,7 +5,7 @@
  */
 
 import { writable, derived } from 'svelte/store';
-import type { Call, MediaSettings } from '../types/media';
+import type { Call, MediaSettings } from '../types/media.ts';
 
 export const activeCalls = writable<Map<string, Call>>(new Map());
 export const mediaSettings = writable<MediaSettings>({

@@ -15,7 +15,7 @@ export type {
   IQStanza,
   XMPPError,
   FileAttachment,
-} from './xmpp';
+} from './xmpp.ts';
 
 export {
   ConnectionState,
@@ -24,7 +24,7 @@ export {
   PresenceType,
   PresenceShow,
   IQType,
-} from './xmpp';
+} from './xmpp.ts';
 
 // User Types
 export type {
@@ -35,9 +35,9 @@ export type {
   ClientCapabilities,
   Roster,
   SubscriptionRequest,
-} from './user';
+} from './user.ts';
 
-export { SubscriptionState } from './user';
+export { SubscriptionState } from './user.ts';
 
 // Chat Types
 export type {
@@ -49,7 +49,7 @@ export type {
   GroupChatConfig,
   TypingIndicator,
   MessageSearchResult,
-} from './chat';
+} from './chat.ts';
 
 export {
   MessageDirection,
@@ -58,7 +58,7 @@ export {
   ConversationType,
   GroupChatRole,
   GroupChatAffiliation,
-} from './chat';
+} from './chat.ts';
 
 // Media Types
 export type {
@@ -70,7 +70,7 @@ export type {
   MediaTrackState,
   CallEvent,
   CallHistoryEntry,
-} from './media';
+} from './media.ts';
 
 export {
   MediaType,
@@ -79,7 +79,7 @@ export {
   CallDirection,
   VideoResolution,
   CallEventType,
-} from './media';
+} from './media.ts';
 
 // Storage Types
 export type {
@@ -89,9 +89,9 @@ export type {
   CachedFile,
   ImageProcessingOptions,
   ProcessedImage,
-} from './storage';
+} from './storage.ts';
 
-export { FileUploadStatus, FileDownloadStatus } from './storage';
+export { FileUploadStatus, FileDownloadStatus } from './storage.ts';
 
 // UI Types
 export type {
@@ -108,6 +108,6 @@ export type {
   ContextMenu,
   ContextMenuItem,
   Toast,
-} from './ui';
+} from './ui.ts';
 
-export { AppView, NotificationType, ModalType } from './ui';
+export { AppView, NotificationType, ModalType } from './ui.ts';

@@ -4,9 +4,9 @@
  * Types for application UI state, themes, and component props.
  */
 
-import type { Conversation, ChatMessage } from './chat';
-import type { Contact } from './user';
-import type { Call } from './media';
+import type { Conversation, ChatMessage } from './chat.ts';
+import type { Contact } from './user.ts';
+import type { Call } from './media.ts';
 
 /**
  * Application View/Route

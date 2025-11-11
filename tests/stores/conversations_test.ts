@@ -10,6 +10,7 @@ import {
   activeConversationId,
   activeConversation,
   activeMessages,
+  sortedConversations,
 } from '../../src/stores/conversations.ts';
 import type { Conversation, ChatMessage } from '../../src/types/chat.ts';
 
@@ -132,9 +133,7 @@ Deno.test('conversations store - sortedConversations sorts by pinned and lastAct
     ['conv-3', conv3],
   ]));
 
-  const sorted = get(
-    (await import('../../src/stores/conversations.ts')).sortedConversations
-  );
+  const sorted = get(sortedConversations);
 
   // Pinned should be first
   assertEquals(sorted[0].id, 'conv-2');

@@ -4,8 +4,8 @@
  * Types for messages, conversations, and chat-related functionality.
  */
 
-import type { JID, ChatState, FileAttachment } from './xmpp';
-import type { Contact } from './user';
+import type { JID, ChatState, FileAttachment } from './xmpp.ts';
+import type { Contact } from './user.ts';
 
 /**
  * Message Direction

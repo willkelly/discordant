@@ -4,7 +4,7 @@
  * Types for user accounts, contacts, rosters, and presence information.
  */
 
-import type { JID, PresenceShow } from './xmpp';
+import type { JID, PresenceShow } from './xmpp.ts';
 
 /**
  * User Account
