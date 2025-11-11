@@ -48,3 +48,7 @@ temp/
 
 # OS files
 Thumbs.db
+
+# Test server certificates
+test-config/prosody/certs/*.crt
+test-config/prosody/certs/*.key
