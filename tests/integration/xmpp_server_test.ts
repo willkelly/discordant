@@ -5,12 +5,46 @@
  * 1. Start the test server: ./scripts/test-server.sh start
  * 2. Create test users: ./scripts/test-server.sh setup-test-users
  * 3. Run tests: deno task test
+ *
+ * To run these tests:
+ * - Set ENABLE_INTEGRATION_TESTS=true environment variable, OR
+ * - Make sure the XMPP test server is running
+ *
+ * These tests are skipped by default to avoid failures when the server isn't running.
  */
 
 import { assertEquals, assertExists } from '@std/assert';
 
 const TEST_SERVER_URL = 'ws://localhost:5280/xmpp-websocket';
 const TEST_DOMAIN = 'localhost';
+
+// Check if integration tests should run
+const ENABLE_INTEGRATION_TESTS = Deno.env.get('ENABLE_INTEGRATION_TESTS') === 'true';
+
+// Helper to check if server is available
+async function isServerAvailable(): Promise<boolean> {
+  if (ENABLE_INTEGRATION_TESTS) return true;
+
+  try {
+    const ws = new WebSocket(TEST_SERVER_URL);
+    const result = await Promise.race([
+      new Promise<boolean>((resolve) => {
+        ws.onopen = () => {
+          ws.close();
+          resolve(true);
+        };
+        ws.onerror = () => resolve(false);
+      }),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 1000)),
+    ]);
+    return result;
+  } catch {
+    return false;
+  }
+}
+
+const serverAvailable = await isServerAvailable();
+const shouldSkipTests = !serverAvailable;
 
 /**
  * Helper function to create a WebSocket connection and authenticate
@@ -97,7 +131,7 @@ async function closeConnection(ws: WebSocket): Promise<void> {
 
 Deno.test({
   name: 'XMPP Server - basic authentication',
-  ignore: false, // Set to true if server is not running
+  ignore: shouldSkipTests,
   fn: async () => {
     const { ws, jid } = await createAuthenticatedConnection('testuser1', 'password123');
 
@@ -111,7 +145,7 @@ Deno.test({
 
 Deno.test({
   name: 'XMPP Server - send and receive presence',
-  ignore: false,
+  ignore: shouldSkipTests,
   fn: async () => {
     const client1 = await createAuthenticatedConnection('alice', 'alicepass', 'client1');
     const client2 = await createAuthenticatedConnection('bob', 'bobpass', 'client2');
@@ -147,7 +181,7 @@ Deno.test({
 
 Deno.test({
   name: 'XMPP Server - send and receive message',
-  ignore: false,
+  ignore: shouldSkipTests,
   fn: async () => {
     const client1 = await createAuthenticatedConnection('testuser1', 'password123', 'sender');
     const client2 = await createAuthenticatedConnection('testuser2', 'password123', 'receiver');
@@ -186,7 +220,7 @@ Deno.test({
 
 Deno.test({
   name: 'XMPP Server - multiple concurrent connections',
-  ignore: false,
+  ignore: shouldSkipTests,
   fn: async () => {
     // Create multiple connections simultaneously
     const connections = await Promise.all([
@@ -210,7 +244,7 @@ Deno.test({
 
 Deno.test({
   name: 'XMPP Server - handle invalid credentials',
-  ignore: false,
+  ignore: shouldSkipTests,
   fn: async () => {
     const ws = new WebSocket(TEST_SERVER_URL);
 

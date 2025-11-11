@@ -164,26 +164,50 @@ deno task coverage     # Generate HTML coverage report
 
 ### Testing
 
-**Unit Tests (Deno):** 18/18 passing ✓
+**Unit Tests (Deno):** 35/35 passing ✓
 
 ```bash
 $ deno task test
 
+# Unit tests (always run)
 parseJID - parses full JID correctly ... ok
-parseJID - parses bare JID correctly ... ok
-parseJID - parses domain-only JID correctly ... ok
+parseXML - rejects DOCTYPE declaration (entity expansion prevention) ... ok
+conversations store - activeConversation returns null when no active ID ... ok
 fileHandler - isImage returns true for image files ... ok
-getBareJID - returns bare JID from full JID ... ok
-fileHandler - formatFileSize formats bytes correctly ... ok
 ...
 
-ok | 18 passed | 0 failed (80ms)
+# Integration tests (require XMPP server)
+XMPP Server - basic authentication ... ignored (server not running)
+XMPP Server - send and receive message ... ignored (server not running)
+...
 
-Code Coverage: 33% overall
-- utils/jid.ts: 100% (✓)
-- stores/conversations.ts: 71.9%
-- lib/storage/fileHandler.ts: 9.7%
+ok | 35 passed | 0 failed | 6 ignored (717ms)
 ```
+
+**Test Coverage:**
+- **Unit Tests**: 35 tests covering utils, stores, XML parsing, and file handling
+- **Integration Tests**: 6 tests for XMPP server integration (auto-skipped when server unavailable)
+- **Security Tests**: 15+ tests for XML security (XXE, XSS, entity expansion)
+
+**Integration Testing with Docker:**
+
+We provide a Docker-based Prosody XMPP server for realistic integration testing:
+
+```bash
+# Start test server
+./scripts/test-server.sh start
+
+# Create test users
+./scripts/test-server.sh setup-test-users
+
+# Run all tests (including integration)
+ENABLE_INTEGRATION_TESTS=true deno task test
+
+# Stop server
+./scripts/test-server.sh stop
+```
+
+See `test-config/README.md` for comprehensive test server documentation.
 
 **E2E Tests (Playwright):** Known Chromium sandbox issue in container environments. Tests are implemented and will run correctly in standard CI/CD environments.
 
