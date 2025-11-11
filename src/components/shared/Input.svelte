@@ -5,6 +5,8 @@
    * Reusable text input with label and error states.
    */
 
+  import { onMount } from 'svelte';
+
   export let type: 'text' | 'password' | 'email' | 'url' = 'text';
   export let value = '';
   export let placeholder = '';
@@ -13,7 +15,13 @@
   export let disabled = false;
   export let required = false;
   export let fullWidth = false;
-  export let id = crypto.randomUUID();
+  export let id = '';
+
+  onMount(() => {
+    if (!id) {
+      id = `input-${Math.random().toString(36).substring(2, 11)}`;
+    }
+  });
 </script>
 
 <div class="input-wrapper" class:full-width={fullWidth}>

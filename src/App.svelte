@@ -10,11 +10,11 @@
   import ConversationList from './components/chat/ConversationList.svelte';
   import ChatView from './components/chat/ChatView.svelte';
   import Toast from './components/shared/Toast.svelte';
-  import { currentView } from '@stores/ui';
-  import { isConnected } from '@stores/connection';
+  import { currentView } from './stores/ui';
+  import { isConnected } from './stores/connection';
   import { xmppClient } from './lib/xmpp/client';
-  import { showToast } from '@stores/ui';
-  import type { ConnectionConfig } from '@types/xmpp';
+  import { showToast } from './stores/ui';
+  import type { ConnectionConfig } from './types/xmpp';
 
   let isInitialized = false;
 

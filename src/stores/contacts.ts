@@ -5,7 +5,7 @@
  */
 
 import { writable, derived } from 'svelte/store';
-import type { Contact, SubscriptionRequest } from '@types/user';
+import type { Contact, SubscriptionRequest } from '../types/user';
 
 export const contacts = writable<Map<string, Contact>>(new Map());
 export const subscriptionRequests = writable<SubscriptionRequest[]>([]);

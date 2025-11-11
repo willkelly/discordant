@@ -5,10 +5,12 @@
  */
 
 import { writable } from 'svelte/store';
-import type { AppView, Modal, Notification, Toast } from '@types/ui';
+import type { Modal, Notification, Toast } from '../types/ui';
 import { defaultTheme } from '../styles/theme';
 
-export const currentView = writable<AppView>('login' as AppView);
+export type AppViewType = 'login' | 'conversations' | 'chat' | 'contacts' | 'settings' | 'profile' | 'call';
+
+export const currentView = writable<AppViewType>('login');
 export const isSidebarOpen = writable<boolean>(true);
 export const theme = writable(defaultTheme);
 export const modals = writable<Modal[]>([]);

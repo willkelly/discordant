@@ -5,12 +5,12 @@
  */
 
 import { Strophe } from 'strophe.js';
-import { connectionState, connectionConfig } from '@stores/connection';
-import { currentUser } from '@stores/user';
-import { conversations, messages, activeConversationId } from '@stores/conversations';
-import { showToast } from '@stores/ui';
-import type { ConnectionConfig, MessageStanza, PresenceStanza } from '@types/xmpp';
-import type { ChatMessage, Conversation } from '@types/chat';
+import { connectionState, connectionConfig } from '../../stores/connection';
+import { currentUser } from '../../stores/user';
+import { conversations, messages, activeConversationId } from '../../stores/conversations';
+import { showToast } from '../../stores/ui';
+import type { ConnectionConfig, MessageStanza, PresenceStanza } from '../../types/xmpp';
+import type { ChatMessage, Conversation } from '../../types/chat';
 
 class XMPPClient {
   private connection: any | null = null;
@@ -24,7 +24,7 @@ class XMPPClient {
     return new Promise((resolve, reject) => {
       try {
         connectionConfig.set(config);
-        connectionState.set('connecting' as any);
+        connectionState.set('connecting');
 
         this.connection = new Strophe.Connection(config.serviceUrl);
 
@@ -35,7 +35,7 @@ class XMPPClient {
           (status: number) => this.onConnectionStatusChange(status, resolve, reject)
         );
       } catch (error) {
-        connectionState.set('error' as any);
+        connectionState.set('error');
         reject(error);
       }
     });
@@ -53,40 +53,40 @@ class XMPPClient {
 
     switch (status) {
       case Status.CONNECTING:
-        connectionState.set('connecting' as any);
+        connectionState.set('connecting');
         break;
 
       case Status.CONNECTED:
-        connectionState.set('connected' as any);
+        connectionState.set('connected');
         this.onConnected();
         resolve();
         break;
 
       case Status.AUTHENTICATING:
-        connectionState.set('authenticating' as any);
+        connectionState.set('authenticating');
         break;
 
       case Status.AUTHFAIL:
-        connectionState.set('error' as any);
+        connectionState.set('error');
         reject(new Error('Authentication failed'));
         break;
 
       case Status.CONNFAIL:
-        connectionState.set('error' as any);
+        connectionState.set('error');
         reject(new Error('Connection failed'));
         break;
 
       case Status.DISCONNECTED:
-        connectionState.set('disconnected' as any);
+        connectionState.set('disconnected');
         this.onDisconnected();
         break;
 
       case Status.DISCONNECTING:
-        connectionState.set('disconnecting' as any);
+        connectionState.set('disconnecting');
         break;
 
       case Status.ERROR:
-        connectionState.set('error' as any);
+        connectionState.set('error');
         reject(new Error('Connection error'));
         break;
     }
@@ -128,7 +128,7 @@ class XMPPClient {
           local: Strophe.getNodeFromJid(jid),
         },
         displayName: Strophe.getNodeFromJid(jid) || jid,
-        presence: 'chat' as any,
+        presence: 'chat',
       });
     }
 
@@ -173,7 +173,7 @@ class XMPPClient {
       if (!convs.has(conversationId)) {
         const newConv: Conversation = {
           id: conversationId,
-          type: 'direct' as any,
+          type: 'direct',
           participants: [
             {
               full: from,
@@ -212,11 +212,11 @@ class XMPPClient {
         domain: Strophe.getDomainFromJid(this.connection?.jid || ''),
         local: Strophe.getNodeFromJid(this.connection?.jid || ''),
       },
-      direction: 'incoming' as any,
-      contentType: 'text' as any,
+      direction: 'incoming',
+      contentType: 'text',
       body,
       attachments: [],
-      status: 'delivered' as any,
+      status: 'delivered',
       timestamp: new Date(),
       isRead: false,
       reactions: [],
@@ -299,11 +299,11 @@ class XMPPClient {
         domain: Strophe.getDomainFromJid(to),
         local: Strophe.getNodeFromJid(to),
       },
-      direction: 'outgoing' as any,
-      contentType: 'text' as any,
+      direction: 'outgoing',
+      contentType: 'text',
       body: text,
       attachments: [],
-      status: 'sent' as any,
+      status: 'sent',
       timestamp: new Date(),
       isRead: true,
       reactions: [],
