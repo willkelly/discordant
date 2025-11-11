@@ -6,8 +6,42 @@
 
 /**
  * Parse XML string to Document
+ *
+ * Security: Validates input to prevent XML entity expansion attacks and XSS.
+ * XMPP stanzas should not contain DOCTYPE declarations or HTML elements.
  */
 export function parseXML(xml: string): Document {
+  // Security: Reject DOCTYPE declarations to prevent entity expansion attacks
+  // XML entity expansion can cause denial of service by exponentially expanding entities
+  if (/<!DOCTYPE/i.test(xml)) {
+    throw new Error(
+      'Security: DOCTYPE declarations not allowed in XMPP stanzas (prevents entity expansion attacks)',
+    );
+  }
+
+  // Security: Reject dangerous HTML/script elements to prevent XSS
+  // XMPP stanzas should only contain XMPP-specific elements (message, presence, iq, etc.)
+  const dangerousPatterns = [
+    /<script[\s>]/i, // <script> tags
+    /<iframe[\s>]/i, // <iframe> tags
+    /<object[\s>]/i, // <object> tags
+    /<embed[\s>]/i, // <embed> tags
+    /<form[\s>]/i, // <form> tags
+    /<html[\s>]/i, // <html> tags
+    /<body[\s>]/i, // <body> tags
+    /<link[\s>]/i, // <link> tags
+    /<meta[\s>]/i, // <meta> tags
+    /\son\w+\s*=/i, // event handlers like onclick=, onload=, etc.
+  ];
+
+  for (const pattern of dangerousPatterns) {
+    if (pattern.test(xml)) {
+      throw new Error(
+        `Security: Potentially dangerous content detected in XML (prevents XSS)`,
+      );
+    }
+  }
+
   const parser = new DOMParser();
   const doc = parser.parseFromString(xml, 'text/xml');
 
