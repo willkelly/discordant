@@ -4,7 +4,7 @@
  * Helper functions for working with Jabber IDs.
  */
 
-import type { JID } from '@types/xmpp';
+import type { JID } from '../types/xmpp.ts';
 
 /**
  * Parse a JID string into components

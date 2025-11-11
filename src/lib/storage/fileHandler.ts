@@ -8,7 +8,7 @@ import type {
   FileUpload,
   ImageProcessingOptions,
   ProcessedImage,
-} from '@types/storage';
+} from '../../types/storage.ts';
 
 class FileHandler {
   /**

@@ -26,20 +26,67 @@
     </label>
   {/if}
 
-  <input
-    {id}
-    {type}
-    {placeholder}
-    {disabled}
-    {required}
-    class="input"
-    class:error={!!error}
-    bind:value
-    on:input
-    on:change
-    on:focus
-    on:blur
-  />
+  {#if type === 'text'}
+    <input
+      {id}
+      type="text"
+      {placeholder}
+      {disabled}
+      {required}
+      class="input"
+      class:error={!!error}
+      bind:value
+      on:input
+      on:change
+      on:focus
+      on:blur
+    />
+  {:else if type === 'password'}
+    <input
+      {id}
+      type="password"
+      {placeholder}
+      {disabled}
+      {required}
+      class="input"
+      class:error={!!error}
+      bind:value
+      on:input
+      on:change
+      on:focus
+      on:blur
+    />
+  {:else if type === 'email'}
+    <input
+      {id}
+      type="email"
+      {placeholder}
+      {disabled}
+      {required}
+      class="input"
+      class:error={!!error}
+      bind:value
+      on:input
+      on:change
+      on:focus
+      on:blur
+    />
+  {:else if type === 'url'}
+    <input
+      {id}
+      type="url"
+      {placeholder}
+      {disabled}
+      {required}
+      class="input"
+      class:error={!!error}
+      bind:value
+      on:input
+      on:change
+      on:focus
+      on:blur
+    />
+  {/if}
 
   {#if error}
     <span class="error-message">{error}</span>

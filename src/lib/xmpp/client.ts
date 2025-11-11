@@ -4,7 +4,7 @@
  * Manages XMPP connection and messaging using Strophe.js.
  */
 
-import Strophe from 'strophe.js';
+import { Strophe } from 'strophe.js';
 import { connectionState, connectionConfig } from '@stores/connection';
 import { currentUser } from '@stores/user';
 import { conversations, messages, activeConversationId } from '@stores/conversations';
@@ -13,7 +13,7 @@ import type { ConnectionConfig, MessageStanza, PresenceStanza } from '@types/xmp
 import type { ChatMessage, Conversation } from '@types/chat';
 
 class XMPPClient {
-  private connection: typeof Strophe.Connection | null = null;
+  private connection: any | null = null;
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
 
