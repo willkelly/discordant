@@ -160,12 +160,14 @@ The app uses an earth-tone palette optimized for readability:
 ### 1. Fresh Islands Architecture
 
 Fresh uses an **islands architecture**:
+
 - Static HTML rendered on the server (fast initial load)
 - Only interactive components are hydrated on the client
 - Minimal JavaScript sent to browser
 - Excellent performance and SEO
 
 **Islands** (interactive):
+
 - LoginIsland - Authentication form with validation
 - ChatViewIsland - Main chat interface container
 - ConversationListIsland - Conversation sidebar
@@ -174,6 +176,7 @@ Fresh uses an **islands architecture**:
 - ToastIsland - Global notifications
 
 **Components** (static):
+
 - Avatar - User avatars with presence indicators
 - Button - UI buttons with variants
 - Input - Form inputs with validation
@@ -183,7 +186,7 @@ Fresh uses an **islands architecture**:
 State management using **Preact Signals** for fine-grained reactivity:
 
 ```typescript
-import { signal, computed } from '@preact/signals';
+import { computed, signal } from '@preact/signals';
 
 // Mutable signals
 export const connectionState = signal<ConnectionStateType>('disconnected');
@@ -200,6 +203,7 @@ console.log(isConnected.value); // false
 ```
 
 **Signals:**
+
 - `connection.ts` - XMPP connection state
 - `user.ts` - Current user account
 - `contacts.ts` - Contact roster
@@ -210,6 +214,7 @@ console.log(isConnected.value); // false
 ### 3. Native XMPP Implementation
 
 Custom XMPP client using Web Standards:
+
 - WebSocket API for XMPP over WebSocket (RFC 7395)
 - DOMParser for XML parsing
 - SASL PLAIN authentication
@@ -343,12 +348,14 @@ When adding new features:
 ### Creating Islands vs Components
 
 Use **islands** when you need:
+
 - User interaction (clicks, form inputs)
 - Client-side state
 - Event handlers
 - Effects and side effects
 
 Use **components** when you have:
+
 - Static content
 - Server-rendered UI
 - No interactivity

@@ -87,29 +87,30 @@ Migrating Discordant from **Svelte 4 + Vite** to **Fresh v2** (Deno's native web
 
 ## Key Differences: Svelte vs Fresh/Preact
 
-| Feature | Svelte | Fresh/Preact |
-|---------|--------|--------------|
-| **Reactivity** | Compiler magic (`$:`) | Explicit signals |
-| **State** | `writable()` stores | `signal()` |
-| **Derived** | `derived()` stores | `computed()` |
-| **Components** | `.svelte` files | `.tsx` islands |
-| **Binding** | `bind:value={x}` | `value={x.value} onInput={(e) => x.value = e.target.value}` |
-| **Events** | `on:click` | `onClick` |
-| **Conditionals** | `{#if}...{/if}` | `{condition && <Component />}` |
-| **Loops** | `{#each}...{/each}` | `{array.map(item => <Component />)}` |
-| **Slots** | `<slot />` | `{props.children}` |
-| **Styles** | Scoped `<style>` | Global CSS or inline styles |
+| Feature          | Svelte                | Fresh/Preact                                                |
+| ---------------- | --------------------- | ----------------------------------------------------------- |
+| **Reactivity**   | Compiler magic (`$:`) | Explicit signals                                            |
+| **State**        | `writable()` stores   | `signal()`                                                  |
+| **Derived**      | `derived()` stores    | `computed()`                                                |
+| **Components**   | `.svelte` files       | `.tsx` islands                                              |
+| **Binding**      | `bind:value={x}`      | `value={x.value} onInput={(e) => x.value = e.target.value}` |
+| **Events**       | `on:click`            | `onClick`                                                   |
+| **Conditionals** | `{#if}...{/if}`       | `{condition && <Component />}`                              |
+| **Loops**        | `{#each}...{/each}`   | `{array.map(item => <Component />)}`                        |
+| **Slots**        | `<slot />`            | `{props.children}`                                          |
+| **Styles**       | Scoped `<style>`      | Global CSS or inline styles                                 |
 
 ## Migration Examples
 
 ### Store → Signal
 
 **Before (Svelte store):**
+
 ```typescript
-import { writable, derived } from 'svelte/store';
+import { derived, writable } from 'svelte/store';
 
 export const count = writable(0);
-export const doubled = derived(count, $count => $count * 2);
+export const doubled = derived(count, ($count) => $count * 2);
 
 // Usage in component
 $count = 5;
@@ -117,8 +118,9 @@ console.log($doubled); // 10
 ```
 
 **After (Preact signal):**
+
 ```typescript
-import { signal, computed } from '@preact/signals';
+import { computed, signal } from '@preact/signals';
 
 export const count = signal(0);
 export const doubled = computed(() => count.value * 2);
@@ -131,6 +133,7 @@ console.log(doubled.value); // 10
 ### Component → Island
 
 **Before (Svelte):**
+
 ```svelte
 <script lang="ts">
   import { count } from '../stores/count';
@@ -146,6 +149,7 @@ console.log(doubled.value); // 10
 ```
 
 **After (Preact):**
+
 ```tsx
 import { count } from '../signals/count.ts';
 

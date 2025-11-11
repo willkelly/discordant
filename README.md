@@ -205,6 +205,7 @@ ok | 35 passed | 0 failed | 6 ignored (717ms)
 ```
 
 **Test Coverage:**
+
 - **Unit Tests**: 35 tests covering utils, stores, XML parsing, and file handling
 - **Integration Tests**: 6 tests for XMPP server integration (auto-skipped when server unavailable)
 - **Security Tests**: 15+ tests for XML security (XXE, XSS, entity expansion)
@@ -286,12 +287,14 @@ const response = await fetch('https://api.example.com/data');
 ### Fresh Islands Architecture
 
 Fresh uses an **islands architecture** where:
+
 - Most components are static HTML rendered on the server
 - Only interactive components (islands) are hydrated on the client
 - Minimal JavaScript is sent to the browser
 - Fast page loads and excellent performance
 
 **Islands** (interactive, client-side):
+
 - LoginIsland - Authentication form
 - ChatViewIsland - Main chat interface
 - ConversationListIsland - Conversation sidebar
@@ -300,6 +303,7 @@ Fresh uses an **islands architecture** where:
 - ToastIsland - Global notifications
 
 **Components** (static, server-side):
+
 - Avatar - User avatars
 - Button - UI buttons
 - Input - Form inputs

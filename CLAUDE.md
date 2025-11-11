@@ -5,6 +5,7 @@ This documentation is specifically for working with this project using Claude Co
 ## Project Overview
 
 Discordant is a modern XMPP-based chat client built with:
+
 - **Runtime**: Deno 2.5+
 - **Framework**: Fresh v2 (Deno's native web framework)
 - **UI Library**: Preact + Preact Signals
@@ -38,6 +39,7 @@ deno test tests/utils/ tests/signals/ tests/lib/ --allow-all
 ```
 
 **Test files:**
+
 - `tests/utils/jid_test.ts` - JID parsing utilities (9 tests)
 - `tests/signals/conversations_test.ts` - Preact signals logic (5 tests)
 - `tests/lib/xmpp/xml_test.ts` - XML parsing & security (17 tests)
@@ -50,6 +52,7 @@ All unit tests should pass without any setup.
 Integration tests require a Docker-based XMPP server:
 
 **Setup:**
+
 ```bash
 # Start the XMPP test server
 ./scripts/test-server.sh start
@@ -62,15 +65,18 @@ ENABLE_INTEGRATION_TESTS=true deno test tests/integration/ --allow-all
 ```
 
 **Test file:**
+
 - `tests/integration/xmpp_server_test.ts` - XMPP server integration (6 tests)
 
 **Note:** Integration tests are automatically skipped when the server isn't running to prevent test failures in CI/CD environments where Docker may not be available.
 
 **Test server endpoints:**
+
 - WebSocket: `ws://localhost:5280/xmpp-websocket`
 - XMPP Client: `localhost:5222`
 
 **Default test users:**
+
 - `testuser1@localhost` / `password123`
 - `testuser2@localhost` / `password123`
 - `alice@localhost` / `alicepass`
@@ -195,6 +201,7 @@ We use **Fresh v2** (Deno's native web framework) with islands architecture:
 - **Preact Signals** - Fine-grained reactivity
 
 **Benefits:**
+
 - Excellent performance (mostly static HTML)
 - Zero build step in development
 - Native Deno integration
@@ -210,6 +217,7 @@ We implement XMPP using **native Web Standards** instead of libraries like Strop
 - **Zero external XMPP dependencies**
 
 **Benefits:**
+
 - Smaller bundle size
 - No unmaintained npm dependencies
 - Full control over protocol implementation
@@ -231,6 +239,7 @@ deno task quality
 ```
 
 This runs:
+
 1. **Format check** - `deno fmt --check`
 2. **Linting** - `deno lint`
 3. **Type checking** - `deno check`
@@ -330,6 +339,7 @@ git push -u origin claude/work-in-progress-011CV1px9nmd8QACSdLQvpZV
 ### Modifying XMPP Implementation
 
 Key files:
+
 - `src/lib/xmpp/native-client.ts` - Main client (uses signals)
 - `src/lib/xmpp/xml.ts` - XML utilities
 - `src/lib/xmpp/sasl.ts` - Authentication
@@ -352,12 +362,14 @@ Key files:
 ### Islands vs Components
 
 **Use islands** when you need:
+
 - User interaction (clicks, inputs)
 - Client-side state (useSignal)
 - Event handlers
 - Effects (useEffect)
 
 **Use components** when you have:
+
 - Static content
 - No interactivity
 - Server-only rendering

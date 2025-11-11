@@ -3,6 +3,7 @@
 ## Architecture Decision: Islands vs Components
 
 **Critical concept**: Fresh uses Islands Architecture
+
 - **Islands** = Interactive components with client-side JS (hydrated on client)
 - **Components** = Static, server-rendered only (no client JS)
 - **Goal**: Minimize islands, maximize static components for performance
@@ -10,6 +11,7 @@
 ## Component Analysis & Classification
 
 ### Static Components (3) - No hydration needed
+
 These are pure display components with no state:
 
 1. **Button** (`components/Button.tsx`)
@@ -62,6 +64,7 @@ These are pure display components with no state:
 ## Conversion Rules: Svelte → Preact
 
 ### 1. File Structure
+
 ```svelte
 <!-- Svelte -->
 <script lang="ts">
@@ -90,7 +93,7 @@ export default function Counter({ name }: Props) {
   const count = useSignal(0);
 
   return (
-    <button onClick={() => count.value++} class="btn">
+    <button onClick={() => count.value++} class='btn'>
       {name}: {count.value}
     </button>
   );
@@ -98,47 +101,55 @@ export default function Counter({ name }: Props) {
 ```
 
 ### 2. Props
+
 - **Svelte**: `export let propName: Type;`
 - **Preact**: Function parameter with interface
 
 ### 3. State Management
 
-| Svelte | Preact |
-|--------|--------|
-| `let x = 0` (reactive) | `const x = useSignal(0)` |
-| `$storeName` (auto-subscribe) | `signalName.value` |
-| `$: doubled = count * 2` | `const doubled = computed(() => count.value * 2)` |
-| `store.set(value)` | `signal.value = value` |
-| `store.update(fn)` | `signal.value = fn(signal.value)` |
+| Svelte                        | Preact                                            |
+| ----------------------------- | ------------------------------------------------- |
+| `let x = 0` (reactive)        | `const x = useSignal(0)`                          |
+| `$storeName` (auto-subscribe) | `signalName.value`                                |
+| `$: doubled = count * 2`      | `const doubled = computed(() => count.value * 2)` |
+| `store.set(value)`            | `signal.value = value`                            |
+| `store.update(fn)`            | `signal.value = fn(signal.value)`                 |
 
 ### 4. Event Handling
+
 - **Svelte**: `on:click={handler}`
 - **Preact**: `onClick={handler}`
 - **Svelte**: `on:input={(e) => value = e.target.value}`
 - **Preact**: `onInput={(e) => value.value = e.currentTarget.value}`
 
 ### 5. Conditionals
+
 - **Svelte**: `{#if condition}...{:else}...{/if}`
 - **Preact**: `{condition ? <div>...</div> : <div>...</div>}`
 - **Preact**: `{condition && <div>...</div>}` (no else)
 
 ### 6. Loops
+
 - **Svelte**: `{#each items as item, i}...{/each}`
 - **Preact**: `{items.map((item, i) => <div key={item.id}>...</div>)}`
 
 ### 7. Slots/Children
+
 - **Svelte**: `<slot />`
 - **Preact**: `{props.children}`
 
 ### 8. Binding
+
 - **Svelte**: `<input bind:value={text} />`
 - **Preact**: `<input value={text.value} onInput={(e) => text.value = e.currentTarget.value} />`
 
 ### 9. Event Dispatching
+
 - **Svelte**: `const dispatch = createEventDispatcher(); dispatch('login', data);`
 - **Preact**: Pass callback prop: `props.onLogin?.(data)`
 
 ### 10. Styles
+
 - **Svelte**: Scoped `<style>` tags
 - **Fresh**: Global CSS in `static/styles/` or inline styles
 - **Strategy**: Use BEM-style class names for uniqueness
@@ -146,39 +157,47 @@ export default function Counter({ name }: Props) {
 ## Migration Execution Order
 
 ### Phase 1: Foundation (Static Components)
+
 ✅ Already done:
+
 - Fresh structure created
 - Signals created
 - deno.json configured
 
 🔨 Now:
+
 1. Create `components/Button.tsx`
 2. Create `components/Input.tsx`
 3. Create `components/Avatar.tsx`
 
 ### Phase 2: Simple Island (Toast)
+
 4. Create `islands/ToastIsland.tsx`
 5. Add to `routes/_app.tsx`
 6. Test signal reactivity
 
 ### Phase 3: Form Island (Login)
+
 7. Create `islands/LoginIsland.tsx`
 8. Test form handling and validation
 9. Update `routes/index.tsx` to use LoginIsland
 
 ### Phase 4: Chat Islands
+
 10. Create `islands/ConversationListIsland.tsx`
 11. Create `islands/MessageListIsland.tsx`
 12. Create `islands/MessageInputIsland.tsx`
 13. Create `islands/ChatViewIsland.tsx`
 
 ### Phase 5: Integration
+
 14. Update `routes/index.tsx` with full app logic
 15. Update `src/lib/xmpp/client.ts` to use signals
 16. Generate `fresh.gen.ts` manifest
 17. Test basic flow: login → see conversations → send message
 
 ### Phase 6: Cleanup
+
 18. Remove old Svelte files (`src/components/**/*.svelte`, `src/App.svelte`)
 19. Remove `src/stores/` directory
 20. Remove Svelte/Vite config files
@@ -186,12 +205,14 @@ export default function Counter({ name }: Props) {
 22. Update `.gitignore`
 
 ### Phase 7: CI/CD & Docs
+
 23. Update GitHub Actions workflows
 24. Update README.md
 25. Update CLAUDE.md
 26. Delete DENO_FIRST.md (no longer needed!)
 
 ### Phase 8: Testing
+
 27. Run unit tests (`deno task test`)
 28. Run integration tests with XMPP server
 29. Manual testing of full flow
@@ -201,6 +222,7 @@ export default function Counter({ name }: Props) {
 File: `src/lib/xmpp/client.ts`
 
 **Find/Replace operations:**
+
 ```typescript
 // Import changes
 - import { writable } from 'svelte/store';
@@ -221,6 +243,7 @@ File: `src/lib/xmpp/client.ts`
 ## Styles Strategy
 
 All component styles will be in `static/styles/components/`:
+
 - `static/styles/components/button.css`
 - `static/styles/components/input.css`
 - `static/styles/components/avatar.css`
@@ -228,6 +251,7 @@ All component styles will be in `static/styles/components/`:
 - `static/styles/components/chat.css`
 
 Import in `static/styles/global.css`:
+
 ```css
 @import './components/button.css';
 @import './components/input.css';
@@ -237,6 +261,7 @@ Import in `static/styles/global.css`:
 ## Testing Checkpoints
 
 After each phase, verify:
+
 1. **Phase 1**: Components render correctly
 2. **Phase 2**: Toast shows/hides on signal change
 3. **Phase 3**: Can submit login form
@@ -262,6 +287,7 @@ After each phase, verify:
 ## Rollback Plan
 
 If migration fails:
+
 1. Revert to commit before `fe33e34`
 2. Keep FRESH_MIGRATION.md for future attempt
 3. Consider hybrid approach (Fresh + keeping some Svelte)

@@ -16,6 +16,7 @@ This directory contains configuration for a local XMPP server (Prosody) used for
 ```
 
 This will:
+
 1. Generate self-signed SSL certificates (if needed)
 2. Start the Prosody XMPP server in Docker
 3. Wait for the server to be ready
@@ -32,6 +33,7 @@ This will:
 ```
 
 Default test users (created by `setup-test-users`):
+
 - `testuser1@localhost` / `password123`
 - `testuser2@localhost` / `password123`
 - `alice@localhost` / `alicepass`
@@ -109,9 +111,11 @@ Or use a test setup script that starts/stops the server automatically.
 ## Configuration
 
 The Prosody configuration is located at:
+
 - `test-config/prosody/prosody.cfg.lua`
 
 Key settings for testing:
+
 - Registration enabled (no throttling)
 - No encryption required
 - WebSocket support enabled
@@ -127,9 +131,9 @@ If ports 5222, 5280, or 5281 are already in use, you can modify the ports in `do
 
 ```yaml
 ports:
-  - "15222:5222"   # Changed external port
-  - "15280:5280"
-  - "15281:5281"
+  - '15222:5222' # Changed external port
+  - '15280:5280'
+  - '15281:5281'
 ```
 
 Then update your test connection URLs accordingly.
@@ -209,6 +213,7 @@ Example GitHub Actions workflow:
 ```
 
 The test server:
+
 - Runs in an isolated Docker container
 - Uses in-memory storage (no persistence)
 - Accepts WebSocket connections on port 5280
