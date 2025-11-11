@@ -11,9 +11,6 @@ A modern XMPP-based chat client with video/audio streaming support. Built with D
 ## Quick Start
 
 ```bash
-# Install dependencies (one time)
-deno cache --reload src/main.ts
-
 # Run development server
 deno task dev
 
@@ -26,6 +23,8 @@ deno task test
 # Build for production
 deno task build
 ```
+
+> **Note**: This is a 100% Deno project. If you see `package.json` or `node_modules/`, they're only for Capacitor mobile builds. All development uses Deno. See [DENO_FIRST.md](DENO_FIRST.md) for details.
 
 ## Why Deno?
 

@@ -4,7 +4,8 @@
  * Provides XML parsing and building utilities using native Web APIs.
  *
  * In browser environments, uses the native DOMParser.
- * In Deno test environments, the tests import and configure xmldom separately.
+ * In Deno test environments, tests use npm:@xmldom/xmldom via Deno's npm: specifier.
+ * (No package.json needed - Deno accesses npm packages directly!)
  */
 
 /**
