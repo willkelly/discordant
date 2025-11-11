@@ -5,7 +5,7 @@
  * Focused on readability and modern aesthetics.
  */
 
-import type { Theme } from '@types/ui';
+import type { Theme } from '../types/ui.ts';
 
 export const defaultTheme: Theme = {
   name: 'Earth Tones',

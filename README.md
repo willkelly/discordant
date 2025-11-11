@@ -57,6 +57,7 @@ Instead of using Strophe.js or other npm XMPP libraries, we implement XMPP using
 - **Zero external XMPP dependencies**
 
 This approach:
+
 - Reduces bundle size significantly
 - Eliminates npm dependency on unmaintained packages
 - Follows Deno's philosophy of using Web Standards
@@ -72,6 +73,7 @@ This approach:
 ### Code Quality
 
 All code follows Deno best practices:
+
 - **Formatted** with `deno fmt` (single quotes, 2-space indent, 100 line width)
 - **Linted** with `deno lint` (all recommended rules)
 - **Type-checked** with `deno check` (strict mode)
@@ -246,6 +248,7 @@ Our native XMPP implementation (`src/lib/xmpp/native-client.ts`) provides:
 - **MUC (Multi-User Chat)** - Group conversations
 
 Key files:
+
 - `xml.ts` - XML parsing and building using DOMParser
 - `sasl.ts` - SASL authentication mechanisms
 - `native-client.ts` - Main XMPP client implementation

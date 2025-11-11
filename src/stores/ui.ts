@@ -6,7 +6,7 @@
 
 import { writable } from 'svelte/store';
 import type { Modal, Notification, Toast } from '../types/ui.ts';
-import { defaultTheme } from '../styles/theme';
+import { defaultTheme } from '../styles/theme.ts';
 
 export type AppViewType =
   | 'login'

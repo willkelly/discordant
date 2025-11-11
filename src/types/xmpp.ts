@@ -45,6 +45,8 @@ export interface ConnectionConfig {
   jid: string;
   /** Authentication password */
   password: string;
+  /** Resource identifier (optional) */
+  resource?: string;
   /** Connection timeout in milliseconds */
   timeout?: number;
   /** Enable automatic reconnection */

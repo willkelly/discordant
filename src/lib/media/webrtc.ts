@@ -4,8 +4,8 @@
  * Handles audio/video calls using WebRTC.
  */
 
-import { activeCalls, mediaSettings } from '@stores/calls';
-import type { Call, CallType } from '@types/media';
+import { activeCalls, mediaSettings } from '../../stores/calls.ts';
+import type { Call, CallType } from '../../types/media.ts';
 
 class WebRTCService {
   private peerConnection: RTCPeerConnection | null = null;

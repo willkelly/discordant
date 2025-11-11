@@ -13,21 +13,12 @@ import { showToast } from '../../stores/ui.ts';
 import type { ConnectionConfig } from '../../types/xmpp.ts';
 import type { ChatMessage, Conversation } from '../../types/chat.ts';
 
-type ConnectionStatus =
-  | 'disconnected'
-  | 'connecting'
-  | 'connected'
-  | 'authenticating'
-  | 'authenticated'
-  | 'disconnecting'
-  | 'error';
-
 export class NativeXMPPClient {
   private ws: WebSocket | null = null;
   private jid: string | null = null;
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
-  private streamId: string | null = null;
+  private _streamId: string | null = null;
   private handlers: Map<string, ((elem: Element) => boolean)[]> = new Map();
 
   /**
@@ -105,7 +96,7 @@ export class NativeXMPPClient {
       if (data.includes('<stream:stream')) {
         const streamMatch = data.match(/id=['"]([^'"]+)['"]/);
         if (streamMatch) {
-          this.streamId = streamMatch[1];
+          this._streamId = streamMatch[1];
         }
         // Wait for stream features
         return;
@@ -589,7 +580,7 @@ export class NativeXMPPClient {
       this.ws.close();
       this.ws = null;
       this.jid = null;
-      this.streamId = null;
+      this._streamId = null;
     }
   }
 

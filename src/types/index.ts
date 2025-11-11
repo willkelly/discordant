@@ -51,7 +51,7 @@ export type {
   TypingIndicator,
 } from './chat.ts';
 
-export {
+export type {
   ConversationType,
   GroupChatAffiliation,
   GroupChatRole,
@@ -91,7 +91,7 @@ export type {
   StorageQuota,
 } from './storage.ts';
 
-export { FileDownloadStatus, FileUploadStatus } from './storage.ts';
+export type { FileDownloadStatus, FileUploadStatus } from './storage.ts';
 
 // UI Types
 export type {
