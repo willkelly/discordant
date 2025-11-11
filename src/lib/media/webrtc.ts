@@ -16,7 +16,7 @@ class WebRTCService {
    */
   async initiateCall(
     recipientJid: string,
-    callType: CallType
+    callType: CallType,
   ): Promise<Call> {
     try {
       // Get user media
@@ -84,11 +84,13 @@ class WebRTCService {
         noiseSuppression: settings.noiseSuppression,
         autoGainControl: settings.autoGainControl,
       },
-      video: callType === 'video' ? {
-        width: { ideal: 1280 },
-        height: { ideal: 720 },
-        frameRate: { ideal: settings.videoFrameRate },
-      } : false,
+      video: callType === 'video'
+        ? {
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          frameRate: { ideal: settings.videoFrameRate },
+        }
+        : false,
     };
 
     return await navigator.mediaDevices.getUserMedia(constraints);
@@ -148,7 +150,7 @@ class WebRTCService {
         call.endTime = new Date();
         if (call.startTime && call.endTime) {
           call.duration = Math.floor(
-            (call.endTime.getTime() - call.startTime.getTime()) / 1000
+            (call.endTime.getTime() - call.startTime.getTime()) / 1000,
           );
         }
 

@@ -2,7 +2,7 @@
  * File Handler Tests
  */
 
-import { assertEquals, assert } from 'https://deno.land/std@0.224.0/assert/mod.ts';
+import { assert, assertEquals } from 'https://deno.land/std@0.224.0/assert/mod.ts';
 import { fileHandler } from '../../../src/lib/storage/fileHandler.ts';
 
 Deno.test('fileHandler - isImage returns true for image files', () => {

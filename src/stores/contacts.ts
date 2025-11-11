@@ -4,7 +4,7 @@
  * Manages the user's contact roster.
  */
 
-import { writable, derived } from 'svelte/store';
+import { derived, writable } from 'svelte/store';
 import type { Contact, SubscriptionRequest } from '../types/user.ts';
 
 export const contacts = writable<Map<string, Contact>>(new Map());

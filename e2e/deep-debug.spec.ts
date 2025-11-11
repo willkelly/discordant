@@ -2,7 +2,7 @@
  * Deep Debug Test - Investigate Chromium Crash
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test('investigate crash with detailed logging', async ({ page, context }) => {
   const errors: string[] = [];
@@ -10,7 +10,7 @@ test('investigate crash with detailed logging', async ({ page, context }) => {
   const requests: string[] = [];
 
   // Capture all console messages
-  page.on('console', msg => {
+  page.on('console', (msg) => {
     const logEntry = {
       type: msg.type(),
       text: msg.text(),
@@ -21,7 +21,7 @@ test('investigate crash with detailed logging', async ({ page, context }) => {
   });
 
   // Capture page errors
-  page.on('pageerror', error => {
+  page.on('pageerror', (error) => {
     errors.push(error.toString());
     console.log('❌ Page Error:', error.message);
     console.log('Stack:', error.stack);
@@ -33,12 +33,12 @@ test('investigate crash with detailed logging', async ({ page, context }) => {
   });
 
   // Capture requests
-  page.on('request', request => {
+  page.on('request', (request) => {
     requests.push(request.url());
   });
 
   // Capture response failures
-  page.on('requestfailed', request => {
+  page.on('requestfailed', (request) => {
     console.log('❌ Request failed:', request.url(), request.failure()?.errorText);
   });
 
@@ -47,7 +47,7 @@ test('investigate crash with detailed logging', async ({ page, context }) => {
   try {
     const response = await page.goto('/', {
       waitUntil: 'domcontentloaded',
-      timeout: 30000
+      timeout: 30000,
     });
 
     console.log('✅ Page loaded, status:', response?.status());
@@ -61,7 +61,7 @@ test('investigate crash with detailed logging', async ({ page, context }) => {
     console.log('🔍 Checking for any text content...');
     await page.waitForTimeout(1000);
 
-    const bodyText = await page.evaluate(() => document.body.innerText).catch(e => {
+    const bodyText = await page.evaluate(() => document.body.innerText).catch((e) => {
       console.log('Failed to get body text:', e.message);
       return '';
     });
@@ -72,7 +72,7 @@ test('investigate crash with detailed logging', async ({ page, context }) => {
     const jsWorking = await page.evaluate(() => {
       console.log('JavaScript is executing!');
       return true;
-    }).catch(e => {
+    }).catch((e) => {
       console.log('JavaScript evaluation failed:', e.message);
       return false;
     });
@@ -88,12 +88,11 @@ test('investigate crash with detailed logging', async ({ page, context }) => {
         appDiv: !!document.getElementById('app'),
         appChildren: document.getElementById('app')?.children.length || 0,
       };
-    }).catch(e => {
+    }).catch((e) => {
       console.log('Failed to get DOM info:', e.message);
       return null;
     });
     console.log('📊 DOM Info:', domInfo);
-
   } catch (error: any) {
     console.log('❌ Navigation error:', error.message);
   }
@@ -105,11 +104,11 @@ test('investigate crash with detailed logging', async ({ page, context }) => {
 
   if (errors.length > 0) {
     console.log('\n⚠️ Errors found:');
-    errors.forEach(err => console.log('  -', err));
+    errors.forEach((err) => console.log('  -', err));
   }
 
   if (logs.length > 0) {
     console.log('\n📝 Console logs:');
-    logs.forEach(log => console.log(`  [${log.type}]`, log.text));
+    logs.forEach((log) => console.log(`  [${log.type}]`, log.text));
   }
 });

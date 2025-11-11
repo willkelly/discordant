@@ -5,14 +5,14 @@
 import { assertEquals } from 'https://deno.land/std@0.224.0/assert/mod.ts';
 import { get } from 'svelte/store';
 import {
+  activeConversation,
+  activeConversationId,
+  activeMessages,
   conversations,
   messages,
-  activeConversationId,
-  activeConversation,
-  activeMessages,
   sortedConversations,
 } from '../../src/stores/conversations.ts';
-import type { Conversation, ChatMessage } from '../../src/types/chat.ts';
+import type { ChatMessage, Conversation } from '../../src/types/chat.ts';
 
 Deno.test('conversations store - activeConversation returns null when no active ID', () => {
   activeConversationId.set(null);
@@ -23,7 +23,7 @@ Deno.test('conversations store - activeConversation returns null when no active 
 Deno.test('conversations store - activeConversation returns conversation when ID is set', () => {
   const testConv: Conversation = {
     id: 'test-conv',
-    type: 'direct' as any,
+    type: 'direct',
     participants: [],
     title: 'Test Conversation',
     unreadCount: 0,
@@ -65,11 +65,11 @@ Deno.test('conversations store - activeMessages returns messages for active conv
       domain: 'example.com',
       local: 'other',
     },
-    direction: 'incoming' as any,
-    contentType: 'text' as any,
+    direction: 'incoming',
+    contentType: 'text',
     body: 'Test message',
     attachments: [],
-    status: 'delivered' as any,
+    status: 'delivered',
     timestamp: new Date(),
     isRead: false,
     reactions: [],
@@ -87,7 +87,7 @@ Deno.test('conversations store - activeMessages returns messages for active conv
 Deno.test('conversations store - sortedConversations sorts by pinned and lastActivity', () => {
   const conv1: Conversation = {
     id: 'conv-1',
-    type: 'direct' as any,
+    type: 'direct',
     participants: [],
     title: 'Conversation 1',
     unreadCount: 0,
@@ -101,7 +101,7 @@ Deno.test('conversations store - sortedConversations sorts by pinned and lastAct
 
   const conv2: Conversation = {
     id: 'conv-2',
-    type: 'direct' as any,
+    type: 'direct',
     participants: [],
     title: 'Conversation 2',
     unreadCount: 0,
@@ -115,7 +115,7 @@ Deno.test('conversations store - sortedConversations sorts by pinned and lastAct
 
   const conv3: Conversation = {
     id: 'conv-3',
-    type: 'direct' as any,
+    type: 'direct',
     participants: [],
     title: 'Conversation 3',
     unreadCount: 0,
@@ -127,11 +127,13 @@ Deno.test('conversations store - sortedConversations sorts by pinned and lastAct
     typingUsers: new Map(),
   };
 
-  conversations.set(new Map([
-    ['conv-1', conv1],
-    ['conv-2', conv2],
-    ['conv-3', conv3],
-  ]));
+  conversations.set(
+    new Map([
+      ['conv-1', conv1],
+      ['conv-2', conv2],
+      ['conv-3', conv3],
+    ]),
+  );
 
   const sorted = get(sortedConversations);
 

@@ -4,45 +4,36 @@
  * Types for messages, conversations, and chat-related functionality.
  */
 
-import type { JID, ChatState, FileAttachment } from './xmpp.ts';
-import type { Contact } from './user.ts';
+import type { ChatState, FileAttachment, JID } from './xmpp.ts';
+// Re-export Contact for convenience
+export type { Contact } from './user.ts';
 
 /**
  * Message Direction
  */
-export enum MessageDirection {
-  INCOMING = 'incoming',
-  OUTGOING = 'outgoing',
-}
+export type MessageDirection = 'incoming' | 'outgoing';
 
 /**
  * Message Status
  */
-export enum MessageStatus {
-  /** Message is being sent */
-  SENDING = 'sending',
-  /** Message was sent */
-  SENT = 'sent',
-  /** Message was delivered to server */
-  DELIVERED = 'delivered',
-  /** Message was read by recipient */
-  READ = 'read',
-  /** Message failed to send */
-  FAILED = 'failed',
-}
+export type MessageStatus =
+  | 'sending' // Message is being sent
+  | 'sent' // Message was sent
+  | 'delivered' // Message was delivered to server
+  | 'read' // Message was read by recipient
+  | 'failed'; // Message failed to send
 
 /**
  * Message Content Type
  */
-export enum MessageContentType {
-  TEXT = 'text',
-  IMAGE = 'image',
-  FILE = 'file',
-  AUDIO = 'audio',
-  VIDEO = 'video',
-  LOCATION = 'location',
-  SYSTEM = 'system',
-}
+export type MessageContentType =
+  | 'text'
+  | 'image'
+  | 'file'
+  | 'audio'
+  | 'video'
+  | 'location'
+  | 'system';
 
 /**
  * Chat Message
@@ -99,12 +90,9 @@ export interface MessageReaction {
 /**
  * Conversation Type
  */
-export enum ConversationType {
-  /** One-on-one chat */
-  DIRECT = 'direct',
-  /** Group chat / MUC */
-  GROUP = 'group',
-}
+export type ConversationType =
+  | 'direct' // One-on-one chat
+  | 'group'; // Group chat / MUC
 
 /**
  * Conversation
@@ -145,7 +133,7 @@ export interface Conversation {
  * Group Chat / MUC specific information
  */
 export interface GroupChat extends Conversation {
-  type: ConversationType.GROUP;
+  type: 'group';
   /** MUC room JID */
   roomJid: JID;
   /** User's nickname in the room */

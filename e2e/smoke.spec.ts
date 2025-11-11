@@ -4,7 +4,7 @@
  * Basic test to verify the app loads without crashing.
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test('app should load without crashing', async ({ page }) => {
   // Navigate and wait for app to load
@@ -21,13 +21,13 @@ test('app should load without crashing', async ({ page }) => {
   await page.screenshot({ path: 'test-screenshot.png' });
 
   // Log any console errors
-  page.on('console', msg => {
+  page.on('console', (msg) => {
     if (msg.type() === 'error') {
       console.log('Browser console error:', msg.text());
     }
   });
 
-  page.on('pageerror', error => {
+  page.on('pageerror', (error) => {
     console.log('Page error:', error);
   });
 

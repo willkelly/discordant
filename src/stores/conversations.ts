@@ -4,8 +4,8 @@
  * Manages chat conversations and messages.
  */
 
-import { writable, derived } from 'svelte/store';
-import type { Conversation, ChatMessage } from '../types/chat.ts';
+import { derived, writable } from 'svelte/store';
+import type { ChatMessage, Conversation } from '../types/chat.ts';
 
 export const conversations = writable<Map<string, Conversation>>(new Map());
 export const messages = writable<Map<string, ChatMessage[]>>(new Map());
@@ -16,7 +16,7 @@ export const activeConversation = derived(
   ([$conversations, $activeId]) => {
     if (!$activeId) return null;
     return $conversations.get($activeId) || null;
-  }
+  },
 );
 
 export const activeMessages = derived(
@@ -24,7 +24,7 @@ export const activeMessages = derived(
   ([$messages, $activeId]) => {
     if (!$activeId) return [];
     return $messages.get($activeId) || [];
-  }
+  },
 );
 
 export const sortedConversations = derived(conversations, ($conversations) => {

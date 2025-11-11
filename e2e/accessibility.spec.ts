@@ -2,7 +2,7 @@
  * Accessibility E2E Tests
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Accessibility', () => {
   test('should have proper ARIA labels', async ({ page }) => {

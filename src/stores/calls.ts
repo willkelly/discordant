@@ -4,7 +4,7 @@
  * Manages audio/video calls.
  */
 
-import { writable, derived } from 'svelte/store';
+import { derived, writable } from 'svelte/store';
 import type { Call, MediaSettings } from '../types/media.ts';
 
 export const activeCalls = writable<Map<string, Call>>(new Map());

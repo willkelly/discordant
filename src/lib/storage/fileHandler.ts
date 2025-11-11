@@ -4,19 +4,15 @@
  * Handles file uploads, downloads, and image processing.
  */
 
-import type {
-  FileUpload,
-  ImageProcessingOptions,
-  ProcessedImage,
-} from '../../types/storage.ts';
+import type { FileUpload, ImageProcessingOptions, ProcessedImage } from '../../types/storage.ts';
 
 class FileHandler {
   /**
    * Process an image file
    */
-  async processImage(
+  processImage(
     file: File,
-    options: ImageProcessingOptions = {}
+    options: ImageProcessingOptions = {},
   ): Promise<ProcessedImage> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -82,14 +78,14 @@ class FileHandler {
                     result.thumbnail = thumbnail.blob;
                     result.thumbnailUrl = thumbnail.url;
                     resolve(result);
-                  }
+                  },
                 );
               } else {
                 resolve(result);
               }
             },
             options.format || 'image/jpeg',
-            options.quality || 0.9
+            options.quality || 0.9,
           );
         } catch (error) {
           reject(error);
@@ -104,9 +100,9 @@ class FileHandler {
   /**
    * Generate thumbnail
    */
-  private async generateThumbnail(
+  private generateThumbnail(
     img: HTMLImageElement,
-    maxSize: number
+    maxSize: number,
   ): Promise<{ blob: Blob; url: string }> {
     return new Promise((resolve, reject) => {
       const canvas = document.createElement('canvas');
@@ -152,7 +148,7 @@ class FileHandler {
           });
         },
         'image/jpeg',
-        0.7
+        0.7,
       );
     });
   }
@@ -160,7 +156,7 @@ class FileHandler {
   /**
    * Upload file (placeholder - needs server implementation)
    */
-  async uploadFile(file: File): Promise<FileUpload> {
+  uploadFile(file: File): Promise<FileUpload> {
     // This would normally upload to a server
     // For now, just create a local URL
     const url = URL.createObjectURL(file);
@@ -168,14 +164,14 @@ class FileHandler {
     const upload: FileUpload = {
       id: crypto.randomUUID(),
       file,
-      status: 'completed' as any,
+      status: 'completed',
       progress: 100,
       startTime: new Date(),
       completionTime: new Date(),
       url,
     };
 
-    return upload;
+    return Promise.resolve(upload);
   }
 
   /**
