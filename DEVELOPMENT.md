@@ -95,22 +95,24 @@ discordant/
 
 ### Installation
 
-```bash
-# Install npm dependencies
-npm install
+This is a **Deno-first project**. Use Deno commands primarily:
 
-# Or using Deno
+```bash
+# Cache dependencies (recommended for Deno)
 deno cache --reload src/main.ts
+
+# Or install npm packages if needed
+npm install
 ```
 
 ### Development
 
 ```bash
-# Start dev server
-npm run dev
-
-# Or using Deno
+# Start dev server (recommended - uses Deno)
 deno task dev
+
+# Alternative using npm
+npm run dev
 ```
 
 The app will be available at http://localhost:3000
@@ -118,12 +120,21 @@ The app will be available at http://localhost:3000
 ### Testing
 
 ```bash
-# Run unit tests
-deno test --allow-all
+# Run unit tests (recommended - uses Deno)
+deno task test
 
 # Run e2e tests
+deno task test:e2e
+
+# Alternative using npm
+npm test
 npm run test:e2e
 ```
+
+**Current Test Results:**
+- ✅ Unit tests: 18/18 passing
+- ✅ Build: Successful
+- ⚠️ E2E tests: See [TEST_RESULTS.md](TEST_RESULTS.md) for environment notes
 
 ## Theme and Design
 
@@ -206,8 +217,14 @@ The codebase follows DRY (Don't Repeat Yourself) principles:
 ## Building for Production
 
 ```bash
-# Build for web
+# Build for web (recommended - uses Deno)
+deno task build
+
+# Alternative using npm
 npm run build
+
+# Preview production build
+deno task preview
 
 # Build for Android
 npx cap add android
@@ -229,16 +246,66 @@ To test the app against a Prosody XMPP server:
 3. Create test accounts
 4. Connect using the login form
 
+## Deno-Specific Development
+
+This project follows **Deno-first development practices**:
+
+### Import Requirements
+
+Deno requires **explicit file extensions** in all imports:
+
+```typescript
+// ✅ Correct - includes .ts extension
+import { JID } from '../types/xmpp.ts';
+import { parseJID } from '../utils/jid.ts';
+
+// ❌ Wrong - missing extension (will fail in Deno)
+import { JID } from '../types/xmpp';
+import { parseJID } from '../utils/jid';
+```
+
+### Using npm Packages
+
+npm packages are accessed via the `npm:` specifier in Deno:
+
+```typescript
+// In deno.json tasks
+"dev": "deno run --allow-all npm:vite"
+
+// This allows Deno to run npm packages without node_modules
+```
+
+### Type Safety
+
+- All code uses TypeScript strict mode
+- No `any` types (removed all type casts)
+- Union types preferred over enums for Svelte compatibility
+
+### Permissions
+
+Deno requires explicit permissions. All tasks use `--allow-all` for development:
+
+```json
+{
+  "tasks": {
+    "dev": "deno run --allow-all npm:vite",
+    "test": "deno test --allow-all"
+  }
+}
+```
+
 ## Contributing
 
 When adding new features:
 
-1. Add type definitions first
+1. Add type definitions first (with .ts extensions!)
 2. Create reusable components
 3. Use existing stores or create new ones
 4. Write unit tests
-5. Add e2e tests for user flows
-6. Update documentation
+5. Run `deno task test` to verify tests pass
+6. Run `deno task build` to ensure it builds
+7. Add e2e tests for user flows
+8. Update documentation
 
 ## Future Roadmap
 
