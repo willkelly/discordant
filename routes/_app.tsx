@@ -1,4 +1,5 @@
 import { type PageProps } from 'fresh';
+import ToastIsland from '../islands/ToastIsland.tsx';
 
 export default function App({ Component }: PageProps) {
   return (
@@ -15,6 +16,7 @@ export default function App({ Component }: PageProps) {
       </head>
       <body>
         <Component />
+        <ToastIsland />
       </body>
     </html>
   );

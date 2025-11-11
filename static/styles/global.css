@@ -5,6 +5,14 @@
  * Implements the earth-tone theme with focus on readability.
  */
 
+/* Component Styles */
+@import './components/button.css';
+@import './components/input.css';
+@import './components/avatar.css';
+@import './components/toast.css';
+@import './components/login.css';
+@import './components/chat.css';
+
 /* CSS Reset */
 *,
 *::before,
