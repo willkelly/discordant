@@ -2,15 +2,12 @@
  * Tests for XML utilities
  */
 
-import {
-  assert,
-  assertEquals,
-  assertThrows,
-} from 'https://deno.land/std@0.224.0/assert/mod.ts';
+import { assert, assertEquals, assertThrows } from 'https://deno.land/std@0.224.0/assert/mod.ts';
 import { parseXML } from '../../../src/lib/xmpp/xml.ts';
 
 Deno.test('parseXML - parses valid XMPP message stanza', () => {
-  const xml = '<message from="user@example.com" to="friend@example.com"><body>Hello!</body></message>';
+  const xml =
+    '<message from="user@example.com" to="friend@example.com"><body>Hello!</body></message>';
   const doc = parseXML(xml);
   const root = doc.documentElement;
 
@@ -24,7 +21,8 @@ Deno.test('parseXML - parses valid XMPP message stanza', () => {
 });
 
 Deno.test('parseXML - parses valid XMPP presence stanza', () => {
-  const xml = '<presence from="user@example.com"><show>away</show><status>Be right back</status></presence>';
+  const xml =
+    '<presence from="user@example.com"><show>away</show><status>Be right back</status></presence>';
   const doc = parseXML(xml);
   const root = doc.documentElement;
 
@@ -49,7 +47,8 @@ Deno.test('parseXML - parses valid XMPP IQ stanza', () => {
 // Security tests
 
 Deno.test('parseXML - rejects DOCTYPE declaration (entity expansion prevention)', () => {
-  const xml = '<!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><message><body>&xxe;</body></message>';
+  const xml =
+    '<!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><message><body>&xxe;</body></message>';
 
   assertThrows(
     () => parseXML(xml),
@@ -213,7 +212,8 @@ Deno.test('parseXML - throws error for malformed XML', () => {
 });
 
 Deno.test('parseXML - handles XML with namespaces', () => {
-  const xml = '<message xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams"><body>Hello</body></message>';
+  const xml =
+    '<message xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams"><body>Hello</body></message>';
   const doc = parseXML(xml);
   const root = doc.documentElement;
 

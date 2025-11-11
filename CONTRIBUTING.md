@@ -47,6 +47,7 @@ deno task quality
 ```
 
 This runs:
+
 - `deno fmt` - Code formatting
 - `deno lint` - Linting
 - `deno check` - Type checking
@@ -72,7 +73,7 @@ This runs:
    export enum Status {
      PENDING = 'pending',
      SUCCESS = 'success',
-     ERROR = 'error'
+     ERROR = 'error',
    }
    ```
 
@@ -188,6 +189,7 @@ Deno.test('feature - does something', () => {
 ```
 
 Test files must:
+
 - End with `_test.ts`
 - Be in the `tests/` directory
 - Have comprehensive coverage for new features
