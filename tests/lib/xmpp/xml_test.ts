@@ -3,6 +3,15 @@
  */
 
 import { assert, assertEquals, assertThrows } from 'https://deno.land/std@0.224.0/assert/mod.ts';
+
+// Set up DOMParser polyfill for Deno test environment
+if (typeof DOMParser === 'undefined') {
+  // @ts-ignore: Polyfill DOMParser for Deno
+  const { DOMParser: XmlDomParser } = await import('npm:@xmldom/xmldom@^0.8.10');
+  // @ts-ignore: Assign to globalThis
+  globalThis.DOMParser = XmlDomParser;
+}
+
 import { parseXML } from '../../../src/lib/xmpp/xml.ts';
 
 Deno.test('parseXML - parses valid XMPP message stanza', () => {

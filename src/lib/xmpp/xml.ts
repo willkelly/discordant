@@ -2,18 +2,10 @@
  * XML Utilities for XMPP
  *
  * Provides XML parsing and building utilities using native Web APIs.
+ *
+ * In browser environments, uses the native DOMParser.
+ * In Deno test environments, the tests import and configure xmldom separately.
  */
-
-// Import DOMParser for Deno environment
-// In browser, the native DOMParser will be used; in Deno/tests, we use @xmldom/xmldom from npm
-let DOMParserImpl: typeof DOMParser;
-if (typeof DOMParser === 'undefined') {
-  // @ts-ignore: Dynamic import for Deno environment - use npm package
-  const { DOMParser: XmlDomParser } = await import('npm:@xmldom/xmldom@^0.8.10');
-  DOMParserImpl = XmlDomParser as typeof DOMParser;
-} else {
-  DOMParserImpl = DOMParser;
-}
 
 /**
  * Parse XML string to Document
@@ -50,7 +42,8 @@ export function parseXML(xml: string): Document {
     }
   }
 
-  const parser = new DOMParserImpl();
+  // Use native DOMParser (available in browser, or polyfilled via globalThis in tests)
+  const parser = new DOMParser();
   const doc = parser.parseFromString(xml, 'text/xml');
 
   // Check for parse errors - works with both browser DOMParser and xmldom
