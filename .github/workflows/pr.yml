@@ -40,7 +40,7 @@ jobs:
             })
 
   size-check:
-    name: Bundle Size Check (Deno-first)
+    name: Fresh Build Size Check
     runs-on: ubuntu-latest
 
     steps:
@@ -52,27 +52,27 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Setup Node.js (for Vite build)
-        uses: actions/setup-node@v6
-        with:
-          node-version: '20'
-
-      - name: Install build dependencies
-        run: npm ci
-
       - name: Build
         run: deno task build
 
       - name: Check bundle size
         run: |
-          echo "📦 Bundle Size Report"
-          du -sh dist/
-          du -h dist/assets/*.js | sort -h
+          echo "📦 Fresh Build Size Report"
+          if [ -d "_fresh" ]; then
+            du -sh _fresh/
+            echo ""
+            echo "📊 Island chunks:"
+            find _fresh -name "*.js" -exec du -h {} \; | sort -h
+            echo ""
+            TOTAL_SIZE=$(du -sk _fresh/ | cut -f1)
+            echo "✅ Total build size: ${TOTAL_SIZE}KB"
 
-          # Warn if bundle is too large (> 1MB for main bundle)
-          MAIN_SIZE=$(find dist/assets -name "index-*.js" -exec du -k {} \; | cut -f1)
-          if [ "$MAIN_SIZE" -gt 1024 ]; then
-            echo "⚠️  Warning: Main bundle is larger than 1MB ($MAIN_SIZE KB)"
+            # Fresh islands are much smaller - warn if total > 500KB
+            if [ "$TOTAL_SIZE" -gt 512 ]; then
+              echo "⚠️  Warning: Build size is larger than 500KB ($TOTAL_SIZE KB)"
+              echo "Fresh uses islands architecture - most code stays on the server!"
+            fi
           else
-            echo "✅ Bundle size looks good: $MAIN_SIZE KB"
+            echo "⚠️  No _fresh directory found - build may have failed"
+            exit 1
           fi

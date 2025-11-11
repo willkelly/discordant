@@ -40,7 +40,7 @@ jobs:
         run: deno lint
 
       - name: Type check
-        run: deno check src/**/*.ts tests/**/*.ts
+        run: deno check **/*.ts **/*.tsx
 
       - name: Run tests
         run: deno task test
@@ -57,7 +57,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   build:
-    name: Build Check (Deno + Vite)
+    name: Build Check (Fresh)
     runs-on: ubuntu-latest
 
     steps:
@@ -69,27 +69,19 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Setup Node.js (for Vite build dependencies)
-        uses: actions/setup-node@v6
-        with:
-          node-version: '20'
-
-      - name: Install Capacitor dependencies
-        run: npm ci
-
       - name: Build project
         run: deno task build
         env:
-          NODE_ENV: production
+          DENO_ENV: production
 
       - name: Check build output
         run: |
-          if [ ! -d "dist" ]; then
-            echo "Build failed: dist directory not created"
+          if [ ! -d "_fresh" ]; then
+            echo "Build failed: _fresh directory not created"
             exit 1
           fi
-          echo "✅ Build successful - dist directory exists"
+          echo "✅ Build successful - _fresh directory exists"
           echo "📦 Build contents:"
-          ls -lah dist/
+          ls -lah _fresh/
           echo ""
-          echo "📊 Build size: $(du -sh dist/ | cut -f1)"
+          echo "📊 Build size: $(du -sh _fresh/ | cut -f1)"
