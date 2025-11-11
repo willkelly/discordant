@@ -14,15 +14,17 @@
     "@capacitor/ios": "^6.0.0"
   },
   "devDependencies": {
-    "@capacitor/cli": "^7.4.4"
+    "@capacitor/cli": "^7.4.4",
+    "@sveltejs/vite-plugin-svelte": "^3.1.0",
+    "svelte": "^4.2.18",
+    "vite": "^5.3.3"
   },
   "comments": {
-    "purpose": "This package.json is ONLY for Capacitor mobile builds (iOS/Android).",
+    "purpose": "This package.json contains ONLY mobile (Capacitor) and build dependencies.",
     "devWorkflow": "All development uses Deno. Run 'deno task dev', 'deno task test', etc.",
-    "nodeModules": "node_modules/ should NOT be committed. It's only needed for mobile builds.",
-    "viteAndSvelte": "Vite and Svelte are accessed via 'npm:' specifiers in deno.json tasks.",
-    "playwright": "Playwright is accessed via 'npm:playwright' in deno.json tasks.",
-    "xmpp": "XMPP uses native implementation, NOT strophe.js.",
-    "capacitorVersions": "Capacitor CLI updated to 7.4.4 from dependabot. Core packages kept at 6.0.0 for stability."
+    "buildDeps": "Vite and Svelte plugins needed here for 'deno task build' to work in CI.",
+    "devDeps": "For dev, Deno accesses these via npm: specifiers (no npm install needed).",
+    "ciBuilds": "CI needs 'npm ci' before build to install Vite plugins.",
+    "nodeModules": "node_modules/ is gitignored and auto-generated as needed."
   }
 }

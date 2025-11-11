@@ -52,6 +52,14 @@ jobs:
         with:
           deno-version: v2.x
 
+      - name: Setup Node.js (for Vite build)
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      - name: Install build dependencies
+        run: npm ci
+
       - name: Build
         run: deno task build
 
