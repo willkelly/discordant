@@ -52,6 +52,7 @@
         "npm:@playwright/test@^1.45.0",
         "npm:@sveltejs/vite-plugin-svelte@^3.1.0",
         "npm:@tsconfig/svelte@^5.0.4",
+        "npm:@xmldom/xmldom@~0.8.10",
         "npm:strophe.js@2",
         "npm:svelte-check@^3.8.4",
         "npm:svelte@^4.2.18",
