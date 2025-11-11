@@ -5,7 +5,7 @@
  */
 
 import { writable, derived } from 'svelte/store';
-import type { Conversation, ChatMessage } from '../types/chat';
+import type { Conversation, ChatMessage } from '../types/chat.ts';
 
 export const conversations = writable<Map<string, Conversation>>(new Map());
 export const messages = writable<Map<string, ChatMessage[]>>(new Map());

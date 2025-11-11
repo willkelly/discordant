@@ -5,7 +5,7 @@
  */
 
 import { writable, derived } from 'svelte/store';
-import type { ConnectionConfig } from '../types/xmpp';
+import type { ConnectionConfig } from '../types/xmpp.ts';
 
 export type ConnectionStateType = 'disconnected' | 'connecting' | 'connected' | 'authenticating' | 'authenticated' | 'disconnecting' | 'error';
 

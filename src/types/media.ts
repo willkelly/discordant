@@ -4,7 +4,7 @@
  * Types for audio/video streaming, calls, and media handling.
  */
 
-import type { JID } from './xmpp';
+import type { JID } from './xmpp.ts';
 
 /**
  * Media Type
