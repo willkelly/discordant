@@ -1,0 +1,88 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build and Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run quality checks
+        run: deno task quality
+
+      - name: Build for production
+        run: deno task build
+        env:
+          NODE_ENV: production
+
+      - name: Create release archive
+        run: |
+          tar -czf discordant-${{ github.ref_name }}.tar.gz dist/
+          zip -r discordant-${{ github.ref_name }}.zip dist/
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 ${{ github.ref_name }}^ 2>/dev/null || echo "")
+
+          if [ -z "$PREV_TAG" ]; then
+            echo "First release"
+            CHANGELOG="Initial release of Discordant XMPP client"
+          else
+            echo "Generating changelog from $PREV_TAG to ${{ github.ref_name }}"
+            CHANGELOG=$(git log $PREV_TAG..${{ github.ref_name }} --pretty=format:"- %s (%h)" --no-merges)
+          fi
+
+          # Save to file for release notes
+          echo "$CHANGELOG" > CHANGELOG.txt
+          echo "Generated changelog"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ github.ref_name }}
+          body_path: CHANGELOG.txt
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          files: |
+            discordant-${{ github.ref_name }}.tar.gz
+            discordant-${{ github.ref_name }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build size report
+        run: |
+          echo "📦 Build Artifacts:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| File | Size |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+          du -h dist/assets/*.js | awk '{print "| " $2 " | " $1 " |"}' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Total size:** $(du -sh dist/ | cut -f1)" >> $GITHUB_STEP_SUMMARY

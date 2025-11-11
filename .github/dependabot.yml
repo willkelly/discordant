@@ -1,0 +1,28 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+    groups:
+      vite:
+        patterns:
+          - 'vite*'
+          - '@vitejs/*'
+      svelte:
+        patterns:
+          - 'svelte*'
+          - '@sveltejs/*'
+      playwright:
+        patterns:
+          - '@playwright/*'
+          - 'playwright'
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 3

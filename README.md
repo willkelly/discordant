@@ -1,5 +1,9 @@
 # Discordant
 
+[![Quality Checks](https://github.com/willkelly/discordant/workflows/Quality%20Checks/badge.svg)](https://github.com/willkelly/discordant/actions/workflows/quality.yml)
+[![Security](https://github.com/willkelly/discordant/workflows/Security%20Checks/badge.svg)](https://github.com/willkelly/discordant/actions/workflows/security.yml)
+[![codecov](https://codecov.io/gh/willkelly/discordant/branch/main/graph/badge.svg)](https://codecov.io/gh/willkelly/discordant)
+
 A modern XMPP-based chat client with video/audio streaming support. Built with Deno, TypeScript, and Svelte following Deno best practices.
 
 **Note:** This is NOT Discord. It's a vibecoded XMPP client.

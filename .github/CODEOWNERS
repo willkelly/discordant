@@ -1,0 +1,21 @@
+# Code Owners
+# These owners will be requested for review when someone opens a pull request.
+
+# Default owners for everything in the repo
+* @willkelly
+
+# Deno configuration
+/deno.json @willkelly
+/deno.lock @willkelly
+
+# GitHub workflows
+/.github/ @willkelly
+
+# Core XMPP implementation
+/src/lib/xmpp/ @willkelly
+
+# Type definitions
+/src/types/ @willkelly
+
+# Tests
+/tests/ @willkelly
