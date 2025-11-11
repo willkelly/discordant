@@ -6,7 +6,8 @@ This documentation is specifically for working with this project using Claude Co
 
 Discordant is a modern XMPP-based chat client built with:
 - **Runtime**: Deno 2.5+
-- **Frontend**: Svelte 4 + Vite
+- **Framework**: Fresh v2 (Deno's native web framework)
+- **UI Library**: Preact + Preact Signals
 - **Language**: TypeScript (strict mode)
 - **XMPP**: Native implementation using WebSocket API
 - **Testing**: Deno Test + Playwright + Docker XMPP server
@@ -14,17 +15,16 @@ Discordant is a modern XMPP-based chat client built with:
 ## Quick Start for Development
 
 ```bash
-# Install dependencies
-/root/.deno/bin/deno install --unsafely-ignore-certificate-errors
+# No installation needed - dependencies are auto-fetched
 
 # Run unit tests
-/root/.deno/bin/deno test --allow-all --unsafely-ignore-certificate-errors
+deno test --allow-all --unsafely-ignore-certificate-errors
 
-# Start dev server
-/root/.deno/bin/deno task dev
+# Start dev server (Fresh with hot reload)
+deno task start
 
 # Run quality checks
-/root/.deno/bin/deno task quality
+deno task quality
 ```
 
 ## Testing Infrastructure
@@ -34,12 +34,12 @@ Discordant is a modern XMPP-based chat client built with:
 Unit tests run without external dependencies:
 
 ```bash
-/root/.deno/bin/deno test tests/utils/ tests/stores/ tests/lib/ --allow-all
+deno test tests/utils/ tests/signals/ tests/lib/ --allow-all
 ```
 
 **Test files:**
 - `tests/utils/jid_test.ts` - JID parsing utilities (9 tests)
-- `tests/stores/conversations_test.ts` - Svelte store logic (5 tests)
+- `tests/signals/conversations_test.ts` - Preact signals logic (5 tests)
 - `tests/lib/xmpp/xml_test.ts` - XML parsing & security (17 tests)
 - `tests/lib/storage/fileHandler_test.ts` - File handling (4 tests)
 
@@ -58,7 +58,7 @@ Integration tests require a Docker-based XMPP server:
 ./scripts/test-server.sh setup-test-users
 
 # Run integration tests
-ENABLE_INTEGRATION_TESTS=true /root/.deno/bin/deno test tests/integration/ --allow-all
+ENABLE_INTEGRATION_TESTS=true deno test tests/integration/ --allow-all
 ```
 
 **Test file:**
@@ -82,7 +82,7 @@ ENABLE_INTEGRATION_TESTS=true /root/.deno/bin/deno test tests/integration/ --all
 E2E tests use Playwright for browser automation:
 
 ```bash
-/root/.deno/bin/deno task test:e2e
+deno task test:e2e
 ```
 
 **Known issue:** Chromium sandbox issues in container environments. Tests work fine in standard CI/CD.
@@ -125,45 +125,80 @@ See `test-config/README.md` for comprehensive documentation.
 
 ```
 discordant/
+├── routes/                # Fresh file-based routes
+│   ├── _app.tsx          # Root layout
+│   └── index.tsx         # Main application route
+├── islands/               # Interactive Preact components (hydrated client-side)
+│   ├── LoginIsland.tsx
+│   ├── ChatViewIsland.tsx
+│   ├── ConversationListIsland.tsx
+│   ├── MessageListIsland.tsx
+│   ├── MessageInputIsland.tsx
+│   └── ToastIsland.tsx
+├── components/            # Static Preact components (no client JS)
+│   ├── Avatar.tsx
+│   ├── Button.tsx
+│   └── Input.tsx
+├── signals/               # Preact Signals (reactive state management)
+│   ├── connection.ts     # XMPP connection state
+│   ├── conversations.ts  # Messages and conversations
+│   ├── contacts.ts       # Contact roster
+│   ├── user.ts           # Current user
+│   ├── calls.ts          # Audio/video calls
+│   └── ui.ts             # UI state
 ├── src/
-│   ├── types/              # TypeScript type definitions (union types)
-│   │   ├── xmpp.ts        # XMPP protocol types
-│   │   ├── chat.ts        # Message/conversation types
-│   │   ├── user.ts        # User/contact types
-│   │   ├── media.ts       # Audio/video call types
-│   │   └── ...
-│   ├── components/         # Svelte components
-│   ├── stores/             # Svelte stores (state management)
-│   │   ├── connection.ts  # XMPP connection state
-│   │   ├── conversations.ts # Messages and conversations
-│   │   ├── contacts.ts    # Contact roster
+│   ├── types/             # TypeScript type definitions (union types)
+│   │   ├── xmpp.ts       # XMPP protocol types
+│   │   ├── chat.ts       # Message/conversation types
+│   │   ├── user.ts       # User/contact types
+│   │   ├── media.ts      # Audio/video call types
 │   │   └── ...
 │   ├── lib/
-│   │   ├── xmpp/          # Native XMPP implementation
+│   │   ├── xmpp/         # Native XMPP implementation
 │   │   │   ├── native-client.ts # Main XMPP client
-│   │   │   ├── xml.ts     # XML parsing with DOMParser
-│   │   │   └── sasl.ts    # SASL authentication
-│   │   ├── media/         # WebRTC services
-│   │   └── storage/       # File handling
-│   ├── utils/             # Helper functions
-│   │   └── jid.ts         # JID parsing utilities
-│   └── styles/            # Global styles and theme
+│   │   │   ├── xml.ts    # XML parsing with DOMParser
+│   │   │   └── sasl.ts   # SASL authentication
+│   │   ├── media/        # WebRTC services
+│   │   └── storage/      # File handling
+│   ├── utils/            # Helper functions
+│   │   └── jid.ts        # JID parsing utilities
+│   └── styles/           # Global styles and theme
+├── static/               # Static assets served directly
+│   └── styles/           # Component-specific CSS
 ├── tests/
-│   ├── utils/             # Utility tests
-│   ├── stores/            # Store tests
-│   ├── lib/               # Library tests
-│   └── integration/       # Integration tests (require XMPP server)
-├── e2e/                   # Playwright E2E tests
+│   ├── utils/            # Utility tests
+│   ├── signals/          # Signal tests
+│   ├── lib/              # Library tests
+│   └── integration/      # Integration tests (require XMPP server)
+├── e2e/                  # Playwright E2E tests
 ├── scripts/
-│   └── test-server.sh     # XMPP test server management
+│   └── test-server.sh    # XMPP test server management
 ├── test-config/
-│   └── prosody/           # XMPP server configuration
+│   └── prosody/          # XMPP server configuration
 ├── docker-compose.test.yml # Test server Docker Compose
-├── deno.json              # Deno configuration
-└── package.json           # npm compatibility layer
+├── fresh.config.ts       # Fresh configuration
+├── dev.ts                # Development server entry
+├── main.ts               # Production server entry
+├── deno.json             # Deno configuration
+└── package.json          # Metadata only (no dependencies)
 ```
 
 ## Key Architecture Decisions
+
+### Fresh Islands Architecture
+
+We use **Fresh v2** (Deno's native web framework) with islands architecture:
+
+- **Server-side rendering** - Static HTML generated on server
+- **Islands hydration** - Only interactive components get client JS
+- **Minimal JavaScript** - Small bundle sizes, fast page loads
+- **Preact Signals** - Fine-grained reactivity
+
+**Benefits:**
+- Excellent performance (mostly static HTML)
+- Zero build step in development
+- Native Deno integration
+- Automatic code splitting
 
 ### Native XMPP Implementation
 
@@ -192,7 +227,7 @@ We implement XMPP using **native Web Standards** instead of libraries like Strop
 All code must pass:
 
 ```bash
-/root/.deno/bin/deno task quality
+deno task quality
 ```
 
 This runs:
@@ -205,14 +240,17 @@ This runs:
 
 ### Import Requirements
 
-All imports MUST include explicit `.ts` extensions (Deno requirement):
+All imports MUST include explicit extensions (Deno requirement):
 
 ```typescript
-// ✅ Correct
-import { JID } from '../types/xmpp.ts';
-import { parseJID } from '../utils/jid.ts';
+// ✅ Correct - .ts for TypeScript
+import { JID } from '../src/types/xmpp.ts';
+import { parseJID } from '../src/utils/jid.ts';
 
-// ❌ Wrong - will fail in Deno
+// ✅ Correct - .tsx for TSX files
+import LoginIsland from '../islands/LoginIsland.tsx';
+
+// ❌ Wrong - missing extension (will fail in Deno)
 import { JID } from '../types/xmpp';
 ```
 
@@ -242,15 +280,21 @@ const doc = parser.parseFromString(xml, 'text/xml');
 const response = await fetch('https://api.example.com/data');
 ```
 
-### State Management (Svelte Stores)
+### State Management (Preact Signals)
 
-In tests, use `get()` to read store values:
+Access signal values directly using `.value`:
 
 ```typescript
-import { get } from 'svelte/store';
-import { conversations } from '@stores/conversations.ts';
+import { conversations } from '@signals/conversations.ts';
 
-const allConversations = get(conversations);
+// Read signal value
+const allConversations = conversations.value;
+
+// Write signal value
+conversations.value = new Map([...]);
+
+// Computed signals update automatically
+const sorted = sortedConversations.value; // derived from conversations
 ```
 
 ## Git Workflow
@@ -281,12 +325,12 @@ git push -u origin claude/work-in-progress-011CV1px9nmd8QACSdLQvpZV
 1. Create `*_test.ts` file in appropriate directory
 2. Import test utilities: `import { assertEquals, assertExists } from '@std/assert';`
 3. Write tests using `Deno.test()`
-4. Run tests: `/root/.deno/bin/deno test <test-file> --allow-all`
+4. Run tests: `deno test <test-file> --allow-all`
 
 ### Modifying XMPP Implementation
 
 Key files:
-- `src/lib/xmpp/native-client.ts` - Main client
+- `src/lib/xmpp/native-client.ts` - Main client (uses signals)
 - `src/lib/xmpp/xml.ts` - XML utilities
 - `src/lib/xmpp/sasl.ts` - Authentication
 - `src/types/xmpp.ts` - Type definitions
@@ -298,9 +342,26 @@ Key files:
 1. Define types in `src/types/`
 2. Implement logic in `src/lib/` or `src/utils/`
 3. Add tests in `tests/`
-4. Create Svelte components in `src/components/`
-5. Add store if needed in `src/stores/`
-6. Run `deno task quality` to verify
+4. Create components:
+   - Static components in `components/` (no client JS)
+   - Interactive islands in `islands/` (hydrated)
+5. Add signals if needed in `signals/`
+6. Create routes if needed in `routes/`
+7. Run `deno task quality` to verify
+
+### Islands vs Components
+
+**Use islands** when you need:
+- User interaction (clicks, inputs)
+- Client-side state (useSignal)
+- Event handlers
+- Effects (useEffect)
+
+**Use components** when you have:
+- Static content
+- No interactivity
+- Server-only rendering
+- Better performance (no JS)
 
 ## Troubleshooting
 
@@ -309,7 +370,7 @@ Key files:
 Use `--unsafely-ignore-certificate-errors` flag:
 
 ```bash
-/root/.deno/bin/deno test --allow-all --unsafely-ignore-certificate-errors
+deno test --allow-all --unsafely-ignore-certificate-errors
 ```
 
 ### Integration Tests Failing
@@ -319,22 +380,16 @@ Use `--unsafely-ignore-certificate-errors` flag:
 3. View logs: `./scripts/test-server.sh logs`
 4. Restart: `./scripts/test-server.sh restart`
 
-### Deno Not Found
-
-Use absolute path:
-
-```bash
-/root/.deno/bin/deno <command>
-```
-
 ### Import Errors
 
-Ensure all imports have `.ts` extensions and use absolute or relative paths.
+Ensure all imports have `.ts` or `.tsx` extensions and use absolute or relative paths.
 
 ## Resources
 
 - **Test Server Documentation**: `test-config/README.md`
 - **Project README**: `README.md`
+- **Fresh Documentation**: https://fresh.deno.dev/
+- **Preact Signals**: https://preactjs.com/guide/v10/signals/
 - **Deno Manual**: https://docs.deno.com/
 - **XMPP RFCs**:
   - RFC 6120 (Core)
@@ -354,7 +409,9 @@ Ensure all imports have `.ts` extensions and use absolute or relative paths.
 
 ## Performance Considerations
 
-- **Bundle size**: Native XMPP keeps bundle small
+- **Islands architecture**: Minimal client-side JavaScript
+- **Bundle size**: Native XMPP + Fresh keeps bundle small
+- **Server-side rendering**: Fast initial page loads
 - **Type safety**: No runtime overhead from types
 - **Web Standards**: Browser-optimized APIs
 - **Tree-shaking**: Union types enable better dead code elimination

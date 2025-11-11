@@ -4,7 +4,7 @@
 [![Security](https://github.com/willkelly/discordant/workflows/Security%20Checks/badge.svg)](https://github.com/willkelly/discordant/actions/workflows/security.yml)
 [![codecov](https://codecov.io/gh/willkelly/discordant/branch/main/graph/badge.svg)](https://codecov.io/gh/willkelly/discordant)
 
-A modern XMPP-based chat client with video/audio streaming support. Built with Deno, TypeScript, and Svelte following Deno best practices.
+A modern XMPP-based chat client with video/audio streaming support. Built with Fresh v2 (Deno's native web framework) and Preact.
 
 **Note:** This is NOT Discord. It's a vibecoded XMPP client.
 
@@ -24,7 +24,7 @@ deno task test
 deno task build
 ```
 
-> **Note**: This is a 100% Deno project. If you see `package.json` or `node_modules/`, they're only for Capacitor mobile builds. All development uses Deno. See [DENO_FIRST.md](DENO_FIRST.md) for details.
+> **Note**: This is a 100% Deno project. The `package.json` file contains only metadata - no npm dependencies are used.
 
 ## Why Deno?
 
@@ -41,10 +41,10 @@ This project follows **Deno-first development** principles:
 
 - **Runtime:** Deno 2.5+
 - **Language:** TypeScript (strict mode, no `any` types)
-- **Framework:** Svelte 4
-- **Bundler:** Vite (via Deno npm: specifier)
+- **Framework:** Fresh v2 (Deno's native web framework)
+- **UI Library:** Preact (lightweight React alternative)
+- **Reactivity:** Preact Signals (fine-grained reactive state)
 - **XMPP:** Native WebSocket implementation (no external XMPP library!)
-- **Native Apps:** Capacitor
 - **Testing:** Deno Test + Playwright
 - **Code Quality:** Deno fmt, lint, check
 
@@ -86,18 +86,42 @@ All code follows Deno best practices:
 
 ```
 discordant/
+├── routes/              # Fresh file-based routes
+│   ├── _app.tsx        # Root layout component
+│   └── index.tsx       # Main application route
+├── islands/             # Interactive Preact components (client-side hydration)
+│   ├── LoginIsland.tsx
+│   ├── ChatViewIsland.tsx
+│   ├── ConversationListIsland.tsx
+│   ├── MessageListIsland.tsx
+│   ├── MessageInputIsland.tsx
+│   └── ToastIsland.tsx
+├── components/          # Static Preact components (no client JS)
+│   ├── Avatar.tsx
+│   ├── Button.tsx
+│   └── Input.tsx
+├── signals/             # Preact Signals (reactive state)
+│   ├── connection.ts
+│   ├── conversations.ts
+│   ├── contacts.ts
+│   ├── user.ts
+│   ├── calls.ts
+│   └── ui.ts
 ├── src/
 │   ├── types/           # TypeScript type definitions (union types)
-│   ├── components/      # Svelte components
-│   ├── stores/          # Svelte stores (state management)
 │   ├── lib/
 │   │   ├── xmpp/        # Native XMPP implementation
 │   │   ├── media/       # WebRTC services
 │   │   └── storage/     # File handling
 │   ├── utils/           # Helper functions
 │   └── styles/          # Global styles and theme
+├── static/              # Static assets served directly
+│   └── styles/          # Component-specific CSS
 ├── tests/               # Unit tests (Deno)
 ├── e2e/                 # E2E tests (Playwright)
+├── fresh.config.ts      # Fresh configuration
+├── dev.ts               # Development server entry
+├── main.ts              # Production server entry
 └── deno.json            # Deno configuration
 ```
 
@@ -118,12 +142,9 @@ discordant/
 
 ### Platform Support
 
-- 🌐 Web
-- 📱 Android (via Capacitor)
-- 🍎 iOS (via Capacitor)
-- 💻 Windows
-- 🐧 Linux
-- 🍎 macOS
+- 🌐 Web (primary platform)
+- 📱 Future: Mobile via Tauri
+- 💻 Future: Desktop via Tauri
 
 ### Future Roadmap
 
@@ -262,6 +283,27 @@ const response = await fetch('https://api.example.com/data');
 
 ## Architecture
 
+### Fresh Islands Architecture
+
+Fresh uses an **islands architecture** where:
+- Most components are static HTML rendered on the server
+- Only interactive components (islands) are hydrated on the client
+- Minimal JavaScript is sent to the browser
+- Fast page loads and excellent performance
+
+**Islands** (interactive, client-side):
+- LoginIsland - Authentication form
+- ChatViewIsland - Main chat interface
+- ConversationListIsland - Conversation sidebar
+- MessageListIsland - Message display
+- MessageInputIsland - Message composition
+- ToastIsland - Global notifications
+
+**Components** (static, server-side):
+- Avatar - User avatars
+- Button - UI buttons
+- Input - Form inputs
+
 ### XMPP Implementation
 
 Our native XMPP implementation (`src/lib/xmpp/native-client.ts`) provides:
@@ -282,7 +324,7 @@ Key files:
 
 ### State Management
 
-Svelte stores provide reactive state management:
+Preact Signals provide fine-grained reactive state:
 
 - `connection.ts` - XMPP connection state
 - `user.ts` - Current user profile
@@ -290,6 +332,8 @@ Svelte stores provide reactive state management:
 - `conversations.ts` - Chat conversations and messages
 - `calls.ts` - Active calls
 - `ui.ts` - UI state (toasts, modals, etc.)
+
+Signals enable direct `.value` access and automatic reactivity without re-rendering entire component trees.
 
 ### Type System
 

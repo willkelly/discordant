@@ -1,9 +1,8 @@
 /**
- * Conversations Store Tests
+ * Conversations Signals Tests
  */
 
 import { assertEquals } from 'https://deno.land/std@0.224.0/assert/mod.ts';
-import { get } from 'svelte/store';
 import {
   activeConversation,
   activeConversationId,
@@ -11,16 +10,16 @@ import {
   conversations,
   messages,
   sortedConversations,
-} from '../../src/stores/conversations.ts';
+} from '../../signals/conversations.ts';
 import type { ChatMessage, Conversation } from '../../src/types/chat.ts';
 
-Deno.test('conversations store - activeConversation returns null when no active ID', () => {
-  activeConversationId.set(null);
-  const current = get(activeConversation);
+Deno.test('conversations signals - activeConversation returns null when no active ID', () => {
+  activeConversationId.value = null;
+  const current = activeConversation.value;
   assertEquals(current, null);
 });
 
-Deno.test('conversations store - activeConversation returns conversation when ID is set', () => {
+Deno.test('conversations signals - activeConversation returns conversation when ID is set', () => {
   const testConv: Conversation = {
     id: 'test-conv',
     type: 'direct',
@@ -35,21 +34,21 @@ Deno.test('conversations store - activeConversation returns conversation when ID
     typingUsers: new Map(),
   };
 
-  conversations.set(new Map([['test-conv', testConv]]));
-  activeConversationId.set('test-conv');
+  conversations.value = new Map([['test-conv', testConv]]);
+  activeConversationId.value = 'test-conv';
 
-  const current = get(activeConversation);
+  const current = activeConversation.value;
   assertEquals(current?.id, 'test-conv');
   assertEquals(current?.title, 'Test Conversation');
 });
 
-Deno.test('conversations store - activeMessages returns empty array when no active ID', () => {
-  activeConversationId.set(null);
-  const current = get(activeMessages);
+Deno.test('conversations signals - activeMessages returns empty array when no active ID', () => {
+  activeConversationId.value = null;
+  const current = activeMessages.value;
   assertEquals(current, []);
 });
 
-Deno.test('conversations store - activeMessages returns messages for active conversation', () => {
+Deno.test('conversations signals - activeMessages returns messages for active conversation', () => {
   const testMessage: ChatMessage = {
     id: 'msg-1',
     conversationId: 'test-conv',
@@ -76,15 +75,15 @@ Deno.test('conversations store - activeMessages returns messages for active conv
     isSystem: false,
   };
 
-  messages.set(new Map([['test-conv', [testMessage]]]));
-  activeConversationId.set('test-conv');
+  messages.value = new Map([['test-conv', [testMessage]]]);
+  activeConversationId.value = 'test-conv';
 
-  const current = get(activeMessages);
+  const current = activeMessages.value;
   assertEquals(current.length, 1);
   assertEquals(current[0].body, 'Test message');
 });
 
-Deno.test('conversations store - sortedConversations sorts by pinned and lastActivity', () => {
+Deno.test('conversations signals - sortedConversations sorts by pinned and lastActivity', () => {
   const conv1: Conversation = {
     id: 'conv-1',
     type: 'direct',
@@ -127,15 +126,13 @@ Deno.test('conversations store - sortedConversations sorts by pinned and lastAct
     typingUsers: new Map(),
   };
 
-  conversations.set(
-    new Map([
-      ['conv-1', conv1],
-      ['conv-2', conv2],
-      ['conv-3', conv3],
-    ]),
-  );
+  conversations.value = new Map([
+    ['conv-1', conv1],
+    ['conv-2', conv2],
+    ['conv-3', conv3],
+  ]);
 
-  const sorted = get(sortedConversations);
+  const sorted = sortedConversations.value;
 
   // Pinned should be first
   assertEquals(sorted[0].id, 'conv-2');

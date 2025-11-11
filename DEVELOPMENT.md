@@ -2,120 +2,118 @@
 
 ## Overview
 
-Discordant is a modern, beautiful XMPP-based chat client built with Deno, TypeScript, and Svelte. It features audio/video streaming support, file sharing, and a clean earth-tone UI optimized for readability.
+Discordant is a modern, beautiful XMPP-based chat client built with Fresh v2 (Deno's native web framework) and Preact. It features audio/video streaming support, file sharing, and a clean earth-tone UI optimized for readability.
 
 ## Project Structure
 
 ```
 discordant/
-├── src/
-│   ├── types/              # Comprehensive TypeScript type definitions
-│   │   ├── xmpp.ts        # XMPP protocol types
-│   │   ├── user.ts        # User and contact types
-│   │   ├── chat.ts        # Chat and message types
-│   │   ├── media.ts       # Media streaming types
-│   │   ├── storage.ts     # File handling types
-│   │   └── ui.ts          # UI state types
-│   │
-│   ├── components/        # Svelte components
-│   │   ├── shared/        # Reusable UI components
-│   │   │   ├── Button.svelte
-│   │   │   ├── Input.svelte
-│   │   │   ├── Avatar.svelte
-│   │   │   └── Toast.svelte
-│   │   ├── auth/          # Authentication components
-│   │   │   └── LoginForm.svelte
-│   │   └── chat/          # Chat components
-│   │       ├── ConversationList.svelte
-│   │       ├── MessageList.svelte
-│   │       ├── MessageInput.svelte
-│   │       └── ChatView.svelte
-│   │
-│   ├── stores/            # Svelte stores for state management
-│   │   ├── connection.ts  # XMPP connection state
-│   │   ├── user.ts        # Current user state
-│   │   ├── contacts.ts    # Contact roster
-│   │   ├── conversations.ts # Conversations and messages
-│   │   ├── calls.ts       # Audio/video calls
-│   │   └── ui.ts          # UI state (modals, toasts, etc.)
-│   │
-│   ├── lib/               # Core services and utilities
-│   │   ├── xmpp/
-│   │   │   └── client.ts  # XMPP client service
-│   │   ├── media/
-│   │   │   └── webrtc.ts  # WebRTC service
-│   │   └── storage/
-│   │       └── fileHandler.ts # File handling service
-│   │
-│   ├── utils/             # Helper functions
-│   │   └── jid.ts         # JID parsing utilities
-│   │
-│   ├── styles/            # Global styles and theme
-│   │   ├── theme.ts       # Theme configuration
-│   │   └── global.css     # Global CSS
-│   │
-│   ├── App.svelte         # Root component
-│   └── main.ts            # Entry point
+├── routes/                # Fresh file-based routing
+│   ├── _app.tsx          # Root layout component
+│   └── index.tsx         # Main application route
 │
-├── tests/                 # Unit tests (Deno)
+├── islands/               # Interactive Preact components (client-side hydration)
+│   ├── LoginIsland.tsx
+│   ├── ChatViewIsland.tsx
+│   ├── ConversationListIsland.tsx
+│   ├── MessageListIsland.tsx
+│   ├── MessageInputIsland.tsx
+│   └── ToastIsland.tsx
+│
+├── components/            # Static Preact components (no client JS)
+│   ├── Avatar.tsx
+│   ├── Button.tsx
+│   └── Input.tsx
+│
+├── signals/               # Preact Signals for reactive state
+│   ├── connection.ts     # XMPP connection state
+│   ├── user.ts           # Current user state
+│   ├── contacts.ts       # Contact roster
+│   ├── conversations.ts  # Conversations and messages
+│   ├── calls.ts          # Audio/video calls
+│   └── ui.ts             # UI state (modals, toasts, etc.)
+│
+├── src/
+│   ├── types/             # Comprehensive TypeScript type definitions
+│   │   ├── xmpp.ts       # XMPP protocol types
+│   │   ├── user.ts       # User and contact types
+│   │   ├── chat.ts       # Chat and message types
+│   │   ├── media.ts      # Media streaming types
+│   │   ├── storage.ts    # File handling types
+│   │   └── ui.ts         # UI state types
+│   │
+│   ├── lib/              # Core services and utilities
+│   │   ├── xmpp/
+│   │   │   ├── native-client.ts  # Native XMPP client
+│   │   │   ├── xml.ts            # XML parsing
+│   │   │   └── sasl.ts           # SASL authentication
+│   │   ├── media/
+│   │   │   └── webrtc.ts         # WebRTC service
+│   │   └── storage/
+│   │       └── fileHandler.ts    # File handling service
+│   │
+│   ├── utils/            # Helper functions
+│   │   └── jid.ts        # JID parsing utilities
+│   │
+│   └── styles/           # Global styles and theme
+│       └── global.css    # Global CSS
+│
+├── static/               # Static assets served directly
+│   └── styles/           # Component-specific CSS
+│
+├── tests/                # Unit tests (Deno)
 │   ├── utils/
 │   ├── lib/
-│   └── stores/
+│   └── signals/          # Signal tests
 │
-├── e2e/                   # E2E tests (Playwright)
+├── e2e/                  # E2E tests (Playwright)
 │   ├── login.spec.ts
 │   ├── ui.spec.ts
 │   └── accessibility.spec.ts
 │
 └── Configuration files
-    ├── deno.json          # Deno configuration
-    ├── package.json       # NPM dependencies
-    ├── vite.config.ts     # Vite bundler config
-    ├── tsconfig.json      # TypeScript config
-    ├── playwright.config.ts # Playwright config
-    └── capacitor.config.ts  # Capacitor (native apps) config
+    ├── deno.json         # Deno configuration
+    ├── fresh.config.ts   # Fresh configuration
+    ├── dev.ts            # Development server entry
+    ├── main.ts           # Production server entry
+    ├── tsconfig.json     # TypeScript config
+    └── playwright.config.ts # Playwright config
 ```
 
 ## Technology Stack
 
-- **Runtime:** Deno
+- **Runtime:** Deno 2.5+
 - **Language:** TypeScript (strict mode)
-- **Framework:** Svelte 4
-- **Build Tool:** Vite
-- **XMPP Library:** Strophe.js
-- **Native Apps:** Capacitor
+- **Framework:** Fresh v2 (beta)
+- **UI Library:** Preact
+- **Reactivity:** Preact Signals
+- **XMPP:** Native WebSocket implementation (no external library)
 - **Testing:** Deno Test + Playwright
 
 ## Getting Started
 
 ### Prerequisites
 
-- Deno 1.40+
-- Node.js 18+ (for npm dependencies)
+- Deno 2.5+
 
 ### Installation
 
-This is a **Deno-first project**. Use Deno commands primarily:
+This is a **100% Deno project**. No npm installation required!
 
 ```bash
-# Cache dependencies (recommended for Deno)
-deno cache --reload src/main.ts
-
-# Or install npm packages if needed
-npm install
+# Dependencies are automatically fetched on first run
+# Just start the dev server
+deno task start
 ```
 
 ### Development
 
 ```bash
-# Start dev server (recommended - uses Deno)
-deno task dev
-
-# Alternative using npm
-npm run dev
+# Start Fresh dev server with hot reload
+deno task start
 ```
 
-The app will be available at http://localhost:3000
+The app will be available at http://localhost:8000
 
 ### Testing
 
@@ -159,38 +157,76 @@ The app uses an earth-tone palette optimized for readability:
 
 ## Key Features
 
-### 1. XMPP Messaging
+### 1. Fresh Islands Architecture
 
-- Full XMPP protocol support via Strophe.js
-- Real-time message delivery
-- Presence updates
-- Contact roster management
+Fresh uses an **islands architecture**:
+- Static HTML rendered on the server (fast initial load)
+- Only interactive components are hydrated on the client
+- Minimal JavaScript sent to browser
+- Excellent performance and SEO
 
-### 2. Audio/Video Calls
+**Islands** (interactive):
+- LoginIsland - Authentication form with validation
+- ChatViewIsland - Main chat interface container
+- ConversationListIsland - Conversation sidebar
+- MessageListIsland - Message display with auto-scroll
+- MessageInputIsland - Message composition
+- ToastIsland - Global notifications
 
-- WebRTC-based calls
-- Audio and video support
+**Components** (static):
+- Avatar - User avatars with presence indicators
+- Button - UI buttons with variants
+- Input - Form inputs with validation
+
+### 2. Preact Signals
+
+State management using **Preact Signals** for fine-grained reactivity:
+
+```typescript
+import { signal, computed } from '@preact/signals';
+
+// Mutable signals
+export const connectionState = signal<ConnectionStateType>('disconnected');
+
+// Computed signals (derived state)
+export const isConnected = computed(() => {
+  const state = connectionState.value;
+  return state === 'connected' || state === 'authenticated';
+});
+
+// Direct access
+connectionState.value = 'connecting';
+console.log(isConnected.value); // false
+```
+
+**Signals:**
+- `connection.ts` - XMPP connection state
+- `user.ts` - Current user account
+- `contacts.ts` - Contact roster
+- `conversations.ts` - Chat conversations and messages
+- `calls.ts` - Active audio/video calls
+- `ui.ts` - UI state (modals, toasts, theme)
+
+### 3. Native XMPP Implementation
+
+Custom XMPP client using Web Standards:
+- WebSocket API for XMPP over WebSocket (RFC 7395)
+- DOMParser for XML parsing
+- SASL PLAIN authentication
+- Zero external XMPP dependencies
+- Full protocol control
+
+### 4. WebRTC Calls
+
+- WebRTC-based audio/video calls
 - Mute/unmute controls
 - Camera on/off toggle
 
-### 3. File Sharing
+### 5. File Sharing
 
 - File upload support
 - Inline image rendering
 - Automatic image optimization
-- Thumbnail generation
-
-### 4. State Management
-
-All application state is managed through Svelte stores:
-
-- `connectionState` - XMPP connection status
-- `currentUser` - Current user account
-- `contacts` - Contact roster
-- `conversations` - Chat conversations
-- `messages` - Message history
-- `activeCalls` - Active audio/video calls
-- `ui` - UI state (modals, toasts, theme)
 
 ## Type System
 
@@ -218,25 +254,14 @@ The codebase follows DRY (Don't Repeat Yourself) principles:
 ## Building for Production
 
 ```bash
-# Build for web (recommended - uses Deno)
+# Build for web
 deno task build
 
-# Alternative using npm
-npm run build
-
-# Preview production build
+# Run production server
 deno task preview
-
-# Build for Android
-npx cap add android
-npx cap sync android
-npx cap open android
-
-# Build for iOS
-npx cap add ios
-npx cap sync ios
-npx cap open ios
 ```
+
+Fresh builds are output to the `_fresh/` directory containing only the client-side JavaScript for islands.
 
 ## Testing Against Prosody
 
@@ -265,15 +290,20 @@ import { JID } from '../types/xmpp';
 import { parseJID } from '../utils/jid';
 ```
 
-### Using npm Packages
+### Importing Preact
 
-npm packages are accessed via the `npm:` specifier in Deno:
+Preact is imported from npm via Deno's JSR imports:
 
 ```typescript
-// In deno.json tasks
-"dev": "deno run --allow-all npm:vite"
+// In components and islands
+import { useSignal } from '@preact/signals';
+import { useEffect } from 'preact/hooks';
 
-// This allows Deno to run npm packages without node_modules
+// JSX/TSX with Preact
+export default function MyIsland() {
+  const count = useSignal(0);
+  return <button onClick={() => count.value++}>{count.value}</button>;
+}
 ```
 
 ### Type Safety
@@ -299,14 +329,30 @@ Deno requires explicit permissions. All tasks use `--allow-all` for development:
 
 When adding new features:
 
-1. Add type definitions first (with .ts extensions!)
-2. Create reusable components
-3. Use existing stores or create new ones
-4. Write unit tests
-5. Run `deno task test` to verify tests pass
-6. Run `deno task build` to ensure it builds
-7. Add e2e tests for user flows
-8. Update documentation
+1. **Add type definitions** in `src/types/` (with .ts extensions!)
+2. **Create components**:
+   - Use `components/` for static components (no JS)
+   - Use `islands/` for interactive components (hydrated)
+3. **Use signals** for state management or create new signal files
+4. **Write unit tests** in `tests/`
+5. **Run quality checks**: `deno task quality`
+6. **Build to verify**: `deno task build`
+7. **Add e2e tests** for user flows
+8. **Update documentation**
+
+### Creating Islands vs Components
+
+Use **islands** when you need:
+- User interaction (clicks, form inputs)
+- Client-side state
+- Event handlers
+- Effects and side effects
+
+Use **components** when you have:
+- Static content
+- Server-rendered UI
+- No interactivity
+- Better performance (no JS sent)
 
 ## Future Roadmap
 
