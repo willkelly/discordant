@@ -9,14 +9,14 @@ test('capture runtime errors', async ({ page }) => {
   const logs: string[] = [];
 
   // Capture console messages
-  page.on('console', msg => {
+  page.on('console', (msg) => {
     const text = msg.text();
     logs.push(`[${msg.type()}] ${text}`);
     console.log(`Console ${msg.type()}:`, text);
   });
 
   // Capture page errors
-  page.on('pageerror', error => {
+  page.on('pageerror', (error) => {
     const errorMsg = error.toString();
     errors.push(errorMsg);
     console.log('Page Error:', errorMsg);
@@ -36,7 +36,6 @@ test('capture runtime errors', async ({ page }) => {
     const html = await page.content();
     console.log('HTML length:', html.length);
     console.log('First 500 chars:', html.substring(0, 500));
-
   } catch (error) {
     console.log('Navigation error:', error);
   }
@@ -47,6 +46,6 @@ test('capture runtime errors', async ({ page }) => {
 
   if (errors.length > 0) {
     console.log('\nErrors:');
-    errors.forEach(err => console.log('  -', err));
+    errors.forEach((err) => console.log('  -', err));
   }
 });

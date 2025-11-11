@@ -5,7 +5,7 @@
  * Focused on readability and modern aesthetics.
  */
 
-import type { Theme } from '@types/ui';
+import type { Theme } from '../types/ui.ts';
 
 export const defaultTheme: Theme = {
   name: 'Earth Tones',
@@ -60,17 +60,19 @@ export const defaultTheme: Theme = {
   },
 
   typography: {
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
     fontFamilyHeading: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-    fontFamilyMono: '"Fira Code", "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+    fontFamilyMono:
+      '"Fira Code", "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
 
     fontSize: {
-      xs: '0.75rem',    // 12px
-      sm: '0.875rem',   // 14px
-      base: '1rem',     // 16px
-      lg: '1.125rem',   // 18px
-      xl: '1.25rem',    // 20px
-      '2xl': '1.5rem',  // 24px
+      xs: '0.75rem', // 12px
+      sm: '0.875rem', // 14px
+      base: '1rem', // 16px
+      lg: '1.125rem', // 18px
+      xl: '1.25rem', // 20px
+      '2xl': '1.5rem', // 24px
       '3xl': '1.875rem', // 30px
     },
 
@@ -89,21 +91,21 @@ export const defaultTheme: Theme = {
   },
 
   spacing: {
-    xs: '0.25rem',   // 4px
-    sm: '0.5rem',    // 8px
-    md: '1rem',      // 16px
-    lg: '1.5rem',    // 24px
-    xl: '2rem',      // 32px
-    '2xl': '3rem',   // 48px
-    '3xl': '4rem',   // 64px
+    xs: '0.25rem', // 4px
+    sm: '0.5rem', // 8px
+    md: '1rem', // 16px
+    lg: '1.5rem', // 24px
+    xl: '2rem', // 32px
+    '2xl': '3rem', // 48px
+    '3xl': '4rem', // 64px
   },
 
   borderRadius: {
-    sm: '0.25rem',   // 4px
-    md: '0.5rem',    // 8px
-    lg: '0.75rem',   // 12px
-    xl: '1rem',      // 16px
-    full: '9999px',  // Fully rounded
+    sm: '0.25rem', // 4px
+    md: '0.5rem', // 8px
+    lg: '0.75rem', // 12px
+    xl: '1rem', // 16px
+    full: '9999px', // Fully rounded
   },
 
   shadows: {

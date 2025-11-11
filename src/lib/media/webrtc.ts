@@ -4,8 +4,8 @@
  * Handles audio/video calls using WebRTC.
  */
 
-import { activeCalls, mediaSettings } from '@stores/calls';
-import type { Call, CallType } from '@types/media';
+import { activeCalls, mediaSettings } from '../../stores/calls.ts';
+import type { Call, CallType } from '../../types/media.ts';
 
 class WebRTCService {
   private peerConnection: RTCPeerConnection | null = null;
@@ -16,7 +16,7 @@ class WebRTCService {
    */
   async initiateCall(
     recipientJid: string,
-    callType: CallType
+    callType: CallType,
   ): Promise<Call> {
     try {
       // Get user media
@@ -76,7 +76,16 @@ class WebRTCService {
    * Get user media (audio/video)
    */
   private async getUserMedia(callType: CallType): Promise<MediaStream> {
-    const settings = mediaSettings.subscribe((s) => s)();
+    let settings = {
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true,
+      videoFrameRate: 30,
+    };
+    const unsubscribe = mediaSettings.subscribe((s) => {
+      settings = s;
+    });
+    unsubscribe();
 
     const constraints: MediaStreamConstraints = {
       audio: {
@@ -84,11 +93,13 @@ class WebRTCService {
         noiseSuppression: settings.noiseSuppression,
         autoGainControl: settings.autoGainControl,
       },
-      video: callType === 'video' ? {
-        width: { ideal: 1280 },
-        height: { ideal: 720 },
-        frameRate: { ideal: settings.videoFrameRate },
-      } : false,
+      video: callType === 'video'
+        ? {
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          frameRate: { ideal: settings.videoFrameRate },
+        }
+        : false,
     };
 
     return await navigator.mediaDevices.getUserMedia(constraints);
@@ -148,7 +159,7 @@ class WebRTCService {
         call.endTime = new Date();
         if (call.startTime && call.endTime) {
           call.duration = Math.floor(
-            (call.endTime.getTime() - call.startTime.getTime()) / 1000
+            (call.endTime.getTime() - call.startTime.getTime()) / 1000,
           );
         }
 

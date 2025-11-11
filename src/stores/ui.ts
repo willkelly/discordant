@@ -6,9 +6,16 @@
 
 import { writable } from 'svelte/store';
 import type { Modal, Notification, Toast } from '../types/ui.ts';
-import { defaultTheme } from '../styles/theme';
+import { defaultTheme } from '../styles/theme.ts';
 
-export type AppViewType = 'login' | 'conversations' | 'chat' | 'contacts' | 'settings' | 'profile' | 'call';
+export type AppViewType =
+  | 'login'
+  | 'conversations'
+  | 'chat'
+  | 'contacts'
+  | 'settings'
+  | 'profile'
+  | 'call';
 
 export const currentView = writable<AppViewType>('login');
 export const isSidebarOpen = writable<boolean>(true);
@@ -17,7 +24,11 @@ export const modals = writable<Modal[]>([]);
 export const notifications = writable<Notification[]>([]);
 export const toasts = writable<Toast[]>([]);
 
-export function showToast(message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info', duration = 3000) {
+export function showToast(
+  message: string,
+  type: 'info' | 'success' | 'warning' | 'error' = 'info',
+  duration = 3000,
+) {
   const toast: Toast = {
     id: crypto.randomUUID(),
     message,

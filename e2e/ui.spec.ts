@@ -2,7 +2,7 @@
  * UI Component E2E Tests
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('UI Components', () => {
   test('should apply earth tone theme colors', async ({ page }) => {

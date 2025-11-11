@@ -13,12 +13,12 @@ test('debug using only JavaScript evaluation', async ({ page }) => {
   });
 
   // Capture console
-  page.on('console', msg => {
+  page.on('console', (msg) => {
     console.log(`[${msg.type()}]`, msg.text());
   });
 
   // Capture errors
-  page.on('pageerror', error => {
+  page.on('pageerror', (error) => {
     console.log('❌ Error:', error.message);
   });
 

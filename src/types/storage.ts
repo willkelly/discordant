@@ -7,14 +7,13 @@
 /**
  * File Upload Status
  */
-export enum FileUploadStatus {
-  PENDING = 'pending',
-  UPLOADING = 'uploading',
-  PROCESSING = 'processing',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
-  CANCELLED = 'cancelled',
-}
+export type FileUploadStatus =
+  | 'pending'
+  | 'uploading'
+  | 'processing'
+  | 'completed'
+  | 'failed'
+  | 'cancelled';
 
 /**
  * File Upload

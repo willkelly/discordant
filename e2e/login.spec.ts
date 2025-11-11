@@ -2,7 +2,7 @@
  * Login E2E Tests
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Login Flow', () => {
   test('should display login form on initial load', async ({ page }) => {

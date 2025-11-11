@@ -163,12 +163,11 @@ export interface MediaSettings {
 /**
  * Video Resolution
  */
-export enum VideoResolution {
-  LOW = '320x240',
-  MEDIUM = '640x480',
-  HD = '1280x720',
-  FULL_HD = '1920x1080',
-}
+export type VideoResolution =
+  | '320x240' // LOW
+  | '640x480' // MEDIUM
+  | '1280x720' // HD
+  | '1920x1080'; // FULL_HD
 
 /**
  * Screen Share

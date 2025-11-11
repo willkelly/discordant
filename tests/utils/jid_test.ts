@@ -3,7 +3,7 @@
  */
 
 import { assertEquals } from 'https://deno.land/std@0.224.0/assert/mod.ts';
-import { parseJID, getBareJID, getResource, jidsEqual } from '../../src/utils/jid.ts';
+import { getBareJID, getResource, jidsEqual, parseJID } from '../../src/utils/jid.ts';
 
 Deno.test('parseJID - parses full JID correctly', () => {
   const jid = parseJID('user@example.com/resource');
@@ -64,10 +64,10 @@ Deno.test('jidsEqual - compares bare JIDs correctly', () => {
 Deno.test('jidsEqual - compares full JIDs when compareResource is true', () => {
   assertEquals(
     jidsEqual('user@example.com/resource1', 'user@example.com/resource1', true),
-    true
+    true,
   );
   assertEquals(
     jidsEqual('user@example.com/resource1', 'user@example.com/resource2', true),
-    false
+    false,
   );
 });

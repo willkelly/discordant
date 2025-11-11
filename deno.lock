@@ -36,6 +36,13 @@
     "https://deno.land/std@0.224.0/internal/mod.ts": "534125398c8e7426183e12dc255bb635d94e06d0f93c60a297723abe69d3b22e"
   },
   "workspace": {
+    "dependencies": [
+      "jsr:@std/assert@1",
+      "jsr:@std/encoding@1",
+      "jsr:@std/fs@1",
+      "jsr:@std/path@1",
+      "jsr:@std/testing@1"
+    ],
     "packageJson": {
       "dependencies": [
         "npm:@capacitor/android@6",
@@ -45,6 +52,7 @@
         "npm:@playwright/test@^1.45.0",
         "npm:@sveltejs/vite-plugin-svelte@^3.1.0",
         "npm:@tsconfig/svelte@^5.0.4",
+        "npm:@xmldom/xmldom@~0.8.10",
         "npm:strophe.js@2",
         "npm:svelte-check@^3.8.4",
         "npm:svelte@^4.2.18",
