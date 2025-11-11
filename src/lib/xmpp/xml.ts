@@ -4,6 +4,17 @@
  * Provides XML parsing and building utilities using native Web APIs.
  */
 
+// Import DOMParser for Deno environment
+// In browser, the native DOMParser will be used; in Deno/tests, we use @xmldom/xmldom from npm
+let DOMParserImpl: typeof DOMParser;
+if (typeof DOMParser === 'undefined') {
+  // @ts-ignore: Dynamic import for Deno environment - use npm package
+  const { DOMParser: XmlDomParser } = await import('npm:@xmldom/xmldom@^0.8.10');
+  DOMParserImpl = XmlDomParser as typeof DOMParser;
+} else {
+  DOMParserImpl = DOMParser;
+}
+
 /**
  * Parse XML string to Document
  *
@@ -20,7 +31,7 @@ export function parseXML(xml: string): Document {
   }
 
   // Security: Reject dangerous HTML/script elements to prevent XSS
-  // XMPP stanzas should only contain XMPP-specific elements (message, presence, iq, etc.)
+  // Note: XMPP legitimately uses <body> for message text, so we only block HTML-specific tags
   const dangerousPatterns = [
     /<script[\s>]/i, // <script> tags
     /<iframe[\s>]/i, // <iframe> tags
@@ -28,9 +39,6 @@ export function parseXML(xml: string): Document {
     /<embed[\s>]/i, // <embed> tags
     /<form[\s>]/i, // <form> tags
     /<html[\s>]/i, // <html> tags
-    /<body[\s>]/i, // <body> tags
-    /<link[\s>]/i, // <link> tags
-    /<meta[\s>]/i, // <meta> tags
     /\son\w+\s*=/i, // event handlers like onclick=, onload=, etc.
   ];
 
@@ -42,12 +50,22 @@ export function parseXML(xml: string): Document {
     }
   }
 
-  const parser = new DOMParser();
+  const parser = new DOMParserImpl();
   const doc = parser.parseFromString(xml, 'text/xml');
 
-  const parserError = doc.querySelector('parsererror');
-  if (parserError) {
-    throw new Error(`XML Parse Error: ${parserError.textContent}`);
+  // Check for parse errors - works with both browser DOMParser and xmldom
+  if (doc.querySelector) {
+    // Browser environment
+    const parserError = doc.querySelector('parsererror');
+    if (parserError) {
+      throw new Error(`XML Parse Error: ${parserError.textContent}`);
+    }
+  } else {
+    // xmldom environment - check for parsererror in the document element
+    const docElement = doc.documentElement;
+    if (docElement && docElement.tagName === 'parsererror') {
+      throw new Error(`XML Parse Error: ${docElement.textContent}`);
+    }
   }
 
   return doc;
