@@ -2,29 +2,12 @@
   "name": "discordant",
   "version": "0.1.0",
   "type": "module",
-  "description": "A modern XMPP-based chat client with video/audio streaming support",
+  "description": "A modern XMPP-based chat client with video/audio streaming support. Built with Fresh (Deno) and Preact.",
   "private": true,
-  "scripts": {
-    "capacitor:ios": "npx cap sync ios",
-    "capacitor:android": "npx cap sync android"
-  },
-  "dependencies": {
-    "@capacitor/android": "^6.0.0",
-    "@capacitor/core": "^6.0.0",
-    "@capacitor/ios": "^6.0.0"
-  },
-  "devDependencies": {
-    "@capacitor/cli": "^7.4.4",
-    "@sveltejs/vite-plugin-svelte": "^3.1.0",
-    "svelte": "^4.2.18",
-    "vite": "^5.3.3"
-  },
   "comments": {
-    "purpose": "This package.json contains ONLY mobile (Capacitor) and build dependencies.",
-    "devWorkflow": "All development uses Deno. Run 'deno task dev', 'deno task test', etc.",
-    "buildDeps": "Vite and Svelte plugins needed here for 'deno task build' to work in CI.",
-    "devDeps": "For dev, Deno accesses these via npm: specifiers (no npm install needed).",
-    "ciBuilds": "CI needs 'npm ci' before build to install Vite plugins.",
-    "nodeModules": "node_modules/ is gitignored and auto-generated as needed."
+    "purpose": "100% Deno project - no npm dependencies needed for development or production!",
+    "development": "Run 'deno task start' for dev server, 'deno task test' for tests",
+    "building": "Run 'deno task build' to build for production",
+    "future": "Tauri will be added later for desktop apps"
   }
 }
