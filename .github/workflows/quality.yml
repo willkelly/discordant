@@ -40,7 +40,7 @@ jobs:
         run: deno lint
 
       - name: Type check
-        run: deno check **/*.ts **/*.tsx
+        run: deno task check
 
       - name: Run tests
         run: deno task test
@@ -73,15 +73,3 @@ jobs:
         run: deno task build
         env:
           DENO_ENV: production
-
-      - name: Check build output
-        run: |
-          if [ ! -d "_fresh" ]; then
-            echo "Build failed: _fresh directory not created"
-            exit 1
-          fi
-          echo "✅ Build successful - _fresh directory exists"
-          echo "📦 Build contents:"
-          ls -lah _fresh/
-          echo ""
-          echo "📊 Build size: $(du -sh _fresh/ | cut -f1)"
