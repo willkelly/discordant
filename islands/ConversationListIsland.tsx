@@ -4,9 +4,9 @@
  * Displays list of conversations in the sidebar.
  */
 
-import { sortedConversations, activeConversationId } from '@signals/conversations.ts';
+import { activeConversationId, sortedConversations } from '@signals/conversations.ts';
 import Avatar from '../components/Avatar.tsx';
-import type { Conversation } from '@types/chat.ts';
+import type { Conversation } from '../src/types/chat.ts';
 
 function formatTime(date: Date): string {
   const now = new Date();
@@ -62,6 +62,7 @@ export default function ConversationListIsland() {
 
           return (
             <button
+              type='button'
               key={conversation.id}
               class={itemClasses}
               onClick={() => selectConversation(conversation)}
@@ -87,9 +88,7 @@ export default function ConversationListIsland() {
                   <span class='preview-text line-clamp-2'>
                     {getLastMessagePreview(conversation)}
                   </span>
-                  {hasUnread && (
-                    <span class='unread-badge'>{conversation.unreadCount}</span>
-                  )}
+                  {hasUnread && <span class='unread-badge'>{conversation.unreadCount}</span>}
                 </div>
               </div>
             </button>

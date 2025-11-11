@@ -9,7 +9,7 @@ import { showToast } from '@signals/ui.ts';
 import LoginIsland from '../islands/LoginIsland.tsx';
 import ConversationListIsland from '../islands/ConversationListIsland.tsx';
 import ChatViewIsland from '../islands/ChatViewIsland.tsx';
-import type { ConnectionConfig } from '@types/xmpp.ts';
+import type { ConnectionConfig } from '../src/types/xmpp.ts';
 
 // Import XMPP client (will be initialized here)
 import { xmppClient } from '@lib/xmpp/client.ts';

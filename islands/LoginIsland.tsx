@@ -7,9 +7,8 @@
 import { useSignal } from '@preact/signals';
 import Button from '../components/Button.tsx';
 import Input from '../components/Input.tsx';
-import { connectionState } from '@signals/connection.ts';
 import { showToast } from '@signals/ui.ts';
-import type { ConnectionConfig } from '@types/xmpp.ts';
+import type { ConnectionConfig } from '../src/types/xmpp.ts';
 
 interface LoginIslandProps {
   onLogin: (config: ConnectionConfig) => void;
@@ -54,7 +53,7 @@ export default function LoginIsland({ onLogin }: LoginIslandProps) {
     return isValid;
   }
 
-  async function handleSubmit(e: Event) {
+  function handleSubmit(e: Event) {
     e.preventDefault();
 
     if (!validateForm()) return;

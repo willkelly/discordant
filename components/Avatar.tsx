@@ -4,7 +4,7 @@
  * Displays user avatar with presence indicator.
  */
 
-import type { PresenceShow } from '@types/xmpp.ts';
+import type { PresenceShow } from '../src/types/xmpp.ts';
 
 interface AvatarProps {
   src?: string;
@@ -34,13 +34,11 @@ export default function Avatar({
 
   return (
     <div class={avatarClasses}>
-      {src
-        ? <img src={src} alt={alt} class='avatar-image' />
-        : (
-          <div class='avatar-initials'>
-            {initials}
-          </div>
-        )}
+      {src ? <img src={src} alt={alt} class='avatar-image' /> : (
+        <div class='avatar-initials'>
+          {initials}
+        </div>
+      )}
 
       {presence && <div class={presenceClasses}></div>}
     </div>

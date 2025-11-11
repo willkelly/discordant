@@ -8,7 +8,7 @@ import { useEffect, useRef } from 'preact/hooks';
 import { activeMessages } from '@signals/conversations.ts';
 import { currentUser } from '@signals/user.ts';
 import Avatar from '../components/Avatar.tsx';
-import type { ChatMessage } from '@types/chat.ts';
+import type { ChatMessage } from '../src/types/chat.ts';
 
 function formatMessageTime(date: Date): string {
   return date.toLocaleTimeString([], {
@@ -64,7 +64,9 @@ export default function MessageListIsland() {
 
               <div class='message-content'>
                 {!isOwn && (
-                  <span class='message-sender'>{message.from.displayName || message.from.bare}</span>
+                  <span class='message-sender'>
+                    {message.from.displayName || message.from.bare}
+                  </span>
                 )}
                 <div class='message-bubble'>
                   <p class='message-body'>{message.body}</p>

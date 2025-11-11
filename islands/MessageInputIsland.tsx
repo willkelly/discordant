@@ -64,6 +64,7 @@ export default function MessageInputIsland({
 
       <div class='input-actions'>
         <button
+          type='button'
           class='action-button'
           onClick={handleFileSelect}
           disabled={disabled}

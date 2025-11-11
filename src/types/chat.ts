@@ -9,6 +9,17 @@ import type { ChatState, FileAttachment, JID } from './xmpp.ts';
 export type { Contact } from './user.ts';
 
 /**
+ * Message Sender/Recipient
+ * JID with optional display information
+ */
+export interface MessageContact extends JID {
+  /** Display name */
+  displayName?: string;
+  /** Avatar URL */
+  avatarUrl?: string;
+}
+
+/**
  * Message Direction
  */
 export type MessageDirection = 'incoming' | 'outgoing';
@@ -45,9 +56,9 @@ export interface ChatMessage {
   /** Conversation ID this message belongs to */
   conversationId: string;
   /** Sender JID */
-  from: JID;
+  from: MessageContact;
   /** Recipient JID */
-  to: JID;
+  to: MessageContact;
   /** Message direction relative to current user */
   direction: MessageDirection;
   /** Message content type */
@@ -107,6 +118,8 @@ export interface Conversation {
   participants: JID[];
   /** Conversation title (for groups) or contact name */
   title: string;
+  /** Conversation subtitle (e.g., "last seen", "typing", participant count) */
+  subtitle?: string;
   /** Conversation avatar URL */
   avatarUrl?: string;
   /** Last message in conversation */

@@ -1,6 +1,7 @@
-#!/usr/bin/env -S deno run -A --watch=static/,routes/
+#!/usr/bin/env -S deno run -A --watch=static/,routes/,islands/,signals/
 
-import dev from 'fresh/dev.ts';
-import config from './fresh.config.ts';
+import { App } from 'fresh';
 
-await dev(import.meta.url, './main.ts', config);
+const app = new App();
+
+await app.listen();

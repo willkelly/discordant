@@ -36,13 +36,12 @@ export default function ChatViewIsland({
       <div class='chat-header'>
         <div class='chat-info'>
           <h2 class='chat-title'>{conversation.title}</h2>
-          {conversation.subtitle && (
-            <p class='chat-subtitle'>{conversation.subtitle}</p>
-          )}
+          {conversation.subtitle && <p class='chat-subtitle'>{conversation.subtitle}</p>}
         </div>
 
         <div class='chat-actions'>
           <button
+            type='button'
             class='action-button'
             onClick={() => onStartCall('audio')}
             title='Audio call'
@@ -51,6 +50,7 @@ export default function ChatViewIsland({
             📞
           </button>
           <button
+            type='button'
             class='action-button'
             onClick={() => onStartCall('video')}
             title='Video call'

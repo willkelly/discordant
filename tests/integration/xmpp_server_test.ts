@@ -49,10 +49,10 @@ const shouldSkipTests = !serverAvailable;
 /**
  * Helper function to create a WebSocket connection and authenticate
  */
-async function createAuthenticatedConnection(
+function createAuthenticatedConnection(
   username: string,
   password: string,
-  resource = 'test-resource'
+  resource = 'test-resource',
 ): Promise<{ ws: WebSocket; jid: string }> {
   const ws = new WebSocket(TEST_SERVER_URL);
 
@@ -65,7 +65,9 @@ async function createAuthenticatedConnection(
 
     ws.onopen = () => {
       // Send stream opening
-      ws.send(`<?xml version='1.0'?><stream:stream to='${TEST_DOMAIN}' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>`);
+      ws.send(
+        `<?xml version='1.0'?><stream:stream to='${TEST_DOMAIN}' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>`,
+      );
     };
 
     ws.onmessage = (event) => {
@@ -75,28 +77,32 @@ async function createAuthenticatedConnection(
       if (data.includes('<stream:features>') && data.includes('<mechanism>PLAIN</mechanism>')) {
         // Send SASL auth
         const authPayload = btoa(`\0${username}\0${password}`);
-        ws.send(`<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='PLAIN'>${authPayload}</auth>`);
-      }
-      // Auth successful
-      else if (data.includes('<success xmlns=\'urn:ietf:params:xml:ns:xmpp-sasl\'/>')) {
+        ws.send(
+          `<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='PLAIN'>${authPayload}</auth>`,
+        );
+      } // Auth successful
+      else if (data.includes("<success xmlns='urn:ietf:params:xml:ns:xmpp-sasl'/>")) {
         // Restart stream
-        ws.send(`<?xml version='1.0'?><stream:stream to='${TEST_DOMAIN}' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>`);
-      }
-      // Bind available
-      else if (data.includes('<bind xmlns=\'urn:ietf:params:xml:ns:xmpp-bind\'/>')) {
+        ws.send(
+          `<?xml version='1.0'?><stream:stream to='${TEST_DOMAIN}' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>`,
+        );
+      } // Bind available
+      else if (data.includes("<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'/>")) {
         // Request resource binding
-        ws.send(`<iq type='set' id='bind_1'><bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'><resource>${resource}</resource></bind></iq>`);
-      }
-      // Bind successful
+        ws.send(
+          `<iq type='set' id='bind_1'><bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'><resource>${resource}</resource></bind></iq>`,
+        );
+      } // Bind successful
       else if (data.includes('<jid>') && data.includes('bind_1')) {
         const match = data.match(/<jid>([^<]+)<\/jid>/);
         if (match) {
           clientJid = match[1];
           // Request session
-          ws.send(`<iq type='set' id='session_1'><session xmlns='urn:ietf:params:xml:ns:xmpp-session'/></iq>`);
+          ws.send(
+            `<iq type='set' id='session_1'><session xmlns='urn:ietf:params:xml:ns:xmpp-session'/></iq>`,
+          );
         }
-      }
-      // Session established - authentication complete
+      } // Session established - authentication complete
       else if (data.includes('session_1') && data.includes('result')) {
         clearTimeout(timeout);
         resolve({ ws, jid: clientJid });
@@ -126,7 +132,7 @@ async function closeConnection(ws: WebSocket): Promise<void> {
     ws.close();
   }
   // Wait a bit for cleanup
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise((resolve) => setTimeout(resolve, 100));
 }
 
 Deno.test({
@@ -202,13 +208,15 @@ Deno.test({
     // Send a message from client1 to client2
     const messageText = 'Hello from testuser1!';
     client1.ws.send(
-      `<message to='${client2.jid}' type='chat' id='msg_${Date.now()}'><body>${messageText}</body></message>`
+      `<message to='${client2.jid}' type='chat' id='msg_${Date.now()}'><body>${messageText}</body></message>`,
     );
 
     // Wait for the message with timeout
     const receivedMessage = await Promise.race([
       messagePromise,
-      new Promise<string>((_, reject) => setTimeout(() => reject(new Error('Message timeout')), 5000)),
+      new Promise<string>((_, reject) =>
+        setTimeout(() => reject(new Error('Message timeout')), 5000)
+      ),
     ]);
 
     assertEquals(receivedMessage, messageText);
@@ -254,7 +262,9 @@ Deno.test({
       }, 5000);
 
       ws.onopen = () => {
-        ws.send(`<?xml version='1.0'?><stream:stream to='${TEST_DOMAIN}' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>`);
+        ws.send(
+          `<?xml version='1.0'?><stream:stream to='${TEST_DOMAIN}' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>`,
+        );
       };
 
       ws.onmessage = (event) => {
@@ -263,7 +273,9 @@ Deno.test({
         if (data.includes('<mechanism>PLAIN</mechanism>')) {
           // Send auth with wrong credentials
           const authPayload = btoa('\0wronguser\0wrongpass');
-          ws.send(`<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='PLAIN'>${authPayload}</auth>`);
+          ws.send(
+            `<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='PLAIN'>${authPayload}</auth>`,
+          );
         } else if (data.includes('<failure')) {
           clearTimeout(timeout);
           ws.close();
