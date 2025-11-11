@@ -14,7 +14,7 @@
     "@capacitor/android": "^6.0.0",
     "@capacitor/core": "^6.0.0",
     "@capacitor/ios": "^6.0.0",
-    "strophe.js": "^2.0.0"
+    "strophe.js": "^3.1.1"
   },
   "devDependencies": {
     "@capacitor/cli": "^7.4.4",
