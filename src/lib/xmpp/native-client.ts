@@ -6,10 +6,10 @@
 
 import { $iq, $msg, $pres, getBareJid, getDomain, getLocal, parseXML } from './xml.ts';
 import { SASLAuth } from './sasl.ts';
-import { connectionConfig, connectionState } from '../../stores/connection.ts';
-import { currentUser } from '../../stores/user.ts';
-import { activeConversationId, conversations, messages } from '../../stores/conversations.ts';
-import { showToast } from '../../stores/ui.ts';
+import { connectionConfig, connectionState } from '@signals/connection.ts';
+import { currentUser } from '@signals/user.ts';
+import { activeConversationId, conversations, messages } from '@signals/conversations.ts';
+import { showToast } from '@signals/ui.ts';
 import type { ConnectionConfig } from '../../types/xmpp.ts';
 import type { ChatMessage, Conversation } from '../../types/chat.ts';
 
@@ -26,8 +26,8 @@ export class NativeXMPPClient {
   connect(config: ConnectionConfig): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
-        connectionConfig.set(config);
-        connectionState.set('connecting');
+        connectionConfig.value = config;
+        connectionState.value = 'connecting';
 
         // Extract domain from JID
         const domain = getDomain(config.jid);
@@ -57,7 +57,7 @@ export class NativeXMPPClient {
 
         this.ws.onerror = (error) => {
           console.error('WebSocket error:', error);
-          connectionState.set('error');
+          connectionState.value = 'error';
           reject(new Error('WebSocket connection error'));
         };
 
@@ -65,7 +65,7 @@ export class NativeXMPPClient {
           this.onDisconnected();
         };
       } catch (error) {
-        connectionState.set('error');
+        connectionState.value = 'error';
         reject(error);
       }
     });
@@ -112,7 +112,7 @@ export class NativeXMPPClient {
       // Handle SASL success
       const success = root.querySelector('success');
       if (success) {
-        connectionState.set('authenticated');
+        connectionState.value = 'authenticated';
         // Restart stream after auth
         this.sendStreamHeader(getDomain(config.jid));
         return;
@@ -121,7 +121,7 @@ export class NativeXMPPClient {
       // Handle SASL failure
       const failure = root.querySelector('failure');
       if (failure) {
-        connectionState.set('error');
+        connectionState.value = 'error';
         reject(new Error('Authentication failed'));
         return;
       }
@@ -163,7 +163,7 @@ export class NativeXMPPClient {
     const mechanisms = features.querySelector('mechanisms');
     if (mechanisms && !this.jid) {
       // Authenticate
-      connectionState.set('authenticating');
+      connectionState.value = 'authenticating';
       const plain = Array.from(mechanisms.querySelectorAll('mechanism'))
         .find((m) => m.textContent === 'PLAIN');
 
@@ -206,7 +206,7 @@ export class NativeXMPPClient {
 
     // If we have a JID and no more setup needed, we're connected
     if (this.jid) {
-      connectionState.set('connected');
+      connectionState.value = 'connected';
       this.onConnected();
       resolve();
     }
@@ -230,7 +230,7 @@ export class NativeXMPPClient {
         this.jid = jidElem.textContent;
 
         // Set current user
-        currentUser.set({
+        currentUser.value = {
           jid: {
             full: this.jid,
             bare: getBareJid(this.jid),
@@ -239,11 +239,11 @@ export class NativeXMPPClient {
           },
           displayName: getLocal(this.jid) || this.jid,
           presence: 'chat',
-        });
+        };
 
         // Check if we need session establishment
         // Modern servers don't require this, so we might be done
-        connectionState.set('connected');
+        connectionState.value = 'connected';
         this.onConnected();
         resolve();
       }
@@ -251,7 +251,7 @@ export class NativeXMPPClient {
 
     if (id === 'session_1' && type === 'result') {
       // Session established
-      connectionState.set('connected');
+      connectionState.value = 'connected';
       this.onConnected();
       resolve();
     }
@@ -288,30 +288,22 @@ export class NativeXMPPClient {
    * Called when disconnected
    */
   private onDisconnected(): void {
-    connectionState.set('disconnected');
+    connectionState.value = 'disconnected';
 
-    const config = new Promise<ConnectionConfig | null>((resolve) => {
-      const unsubscribe = connectionConfig.subscribe((c) => {
-        unsubscribe();
-        resolve(c);
-      });
-    });
+    const config = connectionConfig.value;
+    if (config?.autoReconnect && this.reconnectAttempts < this.maxReconnectAttempts) {
+      this.reconnectAttempts++;
+      showToast(
+        `Reconnecting... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`,
+        'info',
+      );
 
-    config.then((c) => {
-      if (c?.autoReconnect && this.reconnectAttempts < this.maxReconnectAttempts) {
-        this.reconnectAttempts++;
-        showToast(
-          `Reconnecting... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`,
-          'info',
-        );
-
-        setTimeout(() => {
-          if (c) {
-            this.connect(c);
-          }
-        }, c.reconnectInterval || 5000);
-      }
-    });
+      setTimeout(() => {
+        if (config) {
+          this.connect(config);
+        }
+      }, config.reconnectInterval || 5000);
+    }
   }
 
   /**
@@ -372,32 +364,31 @@ export class NativeXMPPClient {
     const conversationId = bareJid;
 
     // Get or create conversation
-    conversations.update((convs) => {
-      if (!convs.has(conversationId)) {
-        const newConv: Conversation = {
-          id: conversationId,
-          type: 'direct',
-          participants: [
-            {
-              full: from,
-              bare: bareJid,
-              domain: getDomain(from),
-              local: getLocal(from),
-            },
-          ],
-          title: getLocal(from) || bareJid,
-          unreadCount: 0,
-          isPinned: false,
-          isMuted: false,
-          isArchived: false,
-          createdAt: new Date(),
-          lastActivityAt: new Date(),
-          typingUsers: new Map(),
-        };
-        convs.set(conversationId, newConv);
-      }
-      return convs;
-    });
+    const convs = new Map(conversations.value);
+    if (!convs.has(conversationId)) {
+      const newConv: Conversation = {
+        id: conversationId,
+        type: 'direct',
+        participants: [
+          {
+            full: from,
+            bare: bareJid,
+            domain: getDomain(from),
+            local: getLocal(from),
+          },
+        ],
+        title: getLocal(from) || bareJid,
+        unreadCount: 0,
+        isPinned: false,
+        isMuted: false,
+        isArchived: false,
+        createdAt: new Date(),
+        lastActivityAt: new Date(),
+        typingUsers: new Map(),
+      };
+      convs.set(conversationId, newConv);
+      conversations.value = convs;
+    }
 
     // Create message
     const message: ChatMessage = {
@@ -427,24 +418,22 @@ export class NativeXMPPClient {
     };
 
     // Add message to store
-    messages.update((msgs) => {
-      const convMessages = msgs.get(conversationId) || [];
-      convMessages.push(message);
-      msgs.set(conversationId, convMessages);
-      return msgs;
-    });
+    const msgs = new Map(messages.value);
+    const convMessages = msgs.get(conversationId) || [];
+    convMessages.push(message);
+    msgs.set(conversationId, convMessages);
+    messages.value = msgs;
 
     // Update conversation
-    conversations.update((convs) => {
-      const conv = convs.get(conversationId);
-      if (conv) {
-        conv.lastMessage = message;
-        conv.lastActivityAt = new Date();
-        conv.unreadCount++;
-        convs.set(conversationId, conv);
-      }
-      return convs;
-    });
+    const updatedConvs = new Map(conversations.value);
+    const conv = updatedConvs.get(conversationId);
+    if (conv) {
+      conv.lastMessage = message;
+      conv.lastActivityAt = new Date();
+      conv.unreadCount++;
+      updatedConvs.set(conversationId, conv);
+      conversations.value = updatedConvs;
+    }
 
     return true;
   }
@@ -471,20 +460,12 @@ export class NativeXMPPClient {
   sendMessage(text: string, to?: string): void {
     if (!this.ws || !to) {
       // Get active conversation
-      const promise = new Promise<string | null>((resolve) => {
-        const unsubscribe = activeConversationId.subscribe((id) => {
-          unsubscribe();
-          resolve(id);
-        });
-      });
-
-      promise.then((activeId) => {
-        if (!activeId) {
-          showToast('No active conversation', 'error');
-          return;
-        }
-        this.doSendMessage(text, activeId);
-      });
+      const activeId = activeConversationId.value;
+      if (!activeId) {
+        showToast('No active conversation', 'error');
+        return;
+      }
+      this.doSendMessage(text, activeId);
       return;
     }
 
@@ -529,23 +510,21 @@ export class NativeXMPPClient {
       isSystem: false,
     };
 
-    messages.update((msgs) => {
-      const convMessages = msgs.get(to) || [];
-      convMessages.push(chatMessage);
-      msgs.set(to, convMessages);
-      return msgs;
-    });
+    const msgs = new Map(messages.value);
+    const convMessages = msgs.get(to) || [];
+    convMessages.push(chatMessage);
+    msgs.set(to, convMessages);
+    messages.value = msgs;
 
     // Update conversation
-    conversations.update((convs) => {
-      const conv = convs.get(to);
-      if (conv) {
-        conv.lastMessage = chatMessage;
-        conv.lastActivityAt = new Date();
-        convs.set(to, conv);
-      }
-      return convs;
-    });
+    const convs = new Map(conversations.value);
+    const conv = convs.get(to);
+    if (conv) {
+      conv.lastMessage = chatMessage;
+      conv.lastActivityAt = new Date();
+      convs.set(to, conv);
+      conversations.value = convs;
+    }
   }
 
   /**
