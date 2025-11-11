@@ -17,7 +17,7 @@
     "strophe.js": "^2.0.0"
   },
   "devDependencies": {
-    "@capacitor/cli": "^6.0.0",
+    "@capacitor/cli": "^7.4.4",
     "@playwright/test": "^1.45.0",
     "@sveltejs/vite-plugin-svelte": "^3.1.0",
     "@tsconfig/svelte": "^5.0.4",
