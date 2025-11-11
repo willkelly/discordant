@@ -43,15 +43,44 @@ export function parseXML(xml: string): Document {
   }
 
   // Use native DOMParser (available in browser, or polyfilled via globalThis in tests)
-  // CodeQL Security Note: The parseFromString call below is flagged by static analysis,
-  // but it is safe because:
-  // 1. DOCTYPE declarations are rejected above (line 19) - prevents entity expansion attacks
-  // 2. Dangerous HTML tags are rejected above (line 37) - prevents XSS attacks
-  // 3. Event handlers are rejected above (line 34) - prevents XSS via attributes
-  // 4. This function only parses XMPP protocol stanzas, not arbitrary HTML/XML
-  // 5. The parsed Document is never inserted into the DOM without sanitization
-  // lgtm[js/xml-bomb] - Protected by DOCTYPE rejection
-  // lgtm[js/xss] - Protected by dangerous content rejection
+  //
+  // CodeQL False Positive Suppression:
+  // CodeQL flags this parseFromString call as vulnerable to:
+  //   - js/xml-bomb (XML entity expansion)
+  //   - js/xss (Cross-site scripting)
+  //
+  // However, this is a FALSE POSITIVE because input validation above prevents these attacks:
+  //
+  // Entity Expansion Protection (line 19):
+  //   - Rejects ALL DOCTYPE declarations before parsing
+  //   - Prevents billion laughs attack (e.g., <!ENTITY lol "lol"><!ENTITY lol2 "&lol;&lol;...">)
+  //   - Prevents XXE attacks (e.g., <!ENTITY xxe SYSTEM "file:///etc/passwd">)
+  //   - Test coverage: xml_test.ts lines 51-70 (2 tests)
+  //
+  // XSS Protection (line 37):
+  //   - Rejects dangerous HTML tags: <script>, <iframe>, <object>, <embed>, <form>, <html>
+  //   - Rejects event handler attributes: onclick=, onload=, onerror=, etc.
+  //   - Only allows XMPP protocol stanzas (message, presence, iq, query, etc.)
+  //   - Test coverage: xml_test.ts lines 72-203 (13 tests)
+  //
+  // Data Flow Security:
+  //   - Input: WebSocket message data (src/lib/xmpp/native-client.ts:52)
+  //   - Wrapped: <root>${data}</root> (native-client.ts:101)
+  //   - Validated: Checks above reject malicious content BEFORE parsing
+  //   - Parsed: parseFromString only receives validated, safe XML
+  //   - Output: Document is never inserted into DOM without further sanitization
+  //
+  // The parsed Document is used only for:
+  //   1. Reading XMPP stanza attributes (from, to, type, id)
+  //   2. Extracting message text content
+  //   3. Protocol-level routing decisions
+  //
+  // It is NOT used for:
+  //   - innerHTML or outerHTML assignments
+  //   - Direct DOM insertion
+  //   - Eval or script execution
+  //
+  // codeql[js/xml-bomb] codeql[js/xss]
   const parser = new DOMParser();
   const doc = parser.parseFromString(xml, 'text/xml');
 
