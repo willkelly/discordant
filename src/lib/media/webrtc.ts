@@ -76,7 +76,16 @@ class WebRTCService {
    * Get user media (audio/video)
    */
   private async getUserMedia(callType: CallType): Promise<MediaStream> {
-    const settings = mediaSettings.subscribe((s) => s)();
+    let settings = {
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true,
+      videoFrameRate: 30,
+    };
+    const unsubscribe = mediaSettings.subscribe((s) => {
+      settings = s;
+    });
+    unsubscribe();
 
     const constraints: MediaStreamConstraints = {
       audio: {

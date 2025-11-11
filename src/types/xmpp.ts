@@ -130,12 +130,11 @@ export enum PresenceType {
 /**
  * Presence Show States
  */
-export enum PresenceShow {
-  CHAT = 'chat',
-  AWAY = 'away',
-  XA = 'xa', // Extended Away
-  DND = 'dnd', // Do Not Disturb
-}
+export type PresenceShow =
+  | 'chat'
+  | 'away'
+  | 'xa' // Extended Away
+  | 'dnd'; // Do Not Disturb
 
 /**
  * XMPP Presence Stanza

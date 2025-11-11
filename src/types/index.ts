@@ -17,7 +17,7 @@ export type {
   XMPPError,
 } from './xmpp.ts';
 
-export {
+export type {
   ChatState,
   ConnectionState,
   IQType,
@@ -72,7 +72,7 @@ export type {
   ScreenShare,
 } from './media.ts';
 
-export {
+export type {
   CallDirection,
   CallEventType,
   CallState,

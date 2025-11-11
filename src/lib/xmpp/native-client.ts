@@ -18,7 +18,6 @@ export class NativeXMPPClient {
   private jid: string | null = null;
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
-  private _streamId: string | null = null;
   private handlers: Map<string, ((elem: Element) => boolean)[]> = new Map();
 
   /**
@@ -94,10 +93,6 @@ export class NativeXMPPClient {
     try {
       // Handle stream start
       if (data.includes('<stream:stream')) {
-        const streamMatch = data.match(/id=['"]([^'"]+)['"]/);
-        if (streamMatch) {
-          this._streamId = streamMatch[1];
-        }
         // Wait for stream features
         return;
       }
@@ -580,7 +575,6 @@ export class NativeXMPPClient {
       this.ws.close();
       this.ws = null;
       this.jid = null;
-      this._streamId = null;
     }
   }
 
