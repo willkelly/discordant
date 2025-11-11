@@ -41,6 +41,7 @@ deno task check
 ## Repository Statistics
 
 **Total Application Code:** ~2,800 lines (excluding tests)
+
 - Routes: 2 files, ~94 lines
 - Islands: 6 files, ~520 lines
 - Components: 3 files, ~163 lines
@@ -51,6 +52,7 @@ deno task check
 - Utils: 1 file, ~100 lines
 
 **Test Code:** ~1,200 lines
+
 - Unit Tests: 5 files, 41 tests
 - E2E Tests: 7 files (Playwright)
 
@@ -324,7 +326,13 @@ We implement XMPP using **native Web Standards** instead of libraries like Strop
 export type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed';
 
 // ❌ Avoid - entire enum bundled even if only one value used
-export enum MessageStatus { SENDING, SENT, DELIVERED, READ, FAILED }
+export enum MessageStatus {
+  SENDING,
+  SENT,
+  DELIVERED,
+  READ,
+  FAILED,
+}
 ```
 
 ### 4. Security First
@@ -393,7 +401,13 @@ import { showToast } from '@signals/ui.ts';
 export type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed';
 
 // ❌ Avoid - enum
-export enum MessageStatus { SENDING, SENT, DELIVERED, READ, FAILED }
+export enum MessageStatus {
+  SENDING,
+  SENT,
+  DELIVERED,
+  READ,
+  FAILED,
+}
 ```
 
 ### Web Standards First
@@ -536,6 +550,7 @@ Ensure all imports have `.ts` or `.tsx` extensions and use absolute or relative 
 ### Type Errors
 
 Common issues:
+
 - Missing `.ts`/`.tsx` extensions on imports
 - Using `@types/` prefix instead of direct `../src/types/` paths in files
 - Import map aliases work everywhere except in TSX files (use relative paths there)
@@ -545,6 +560,7 @@ Common issues:
 ### Quality Workflow (`.github/workflows/quality.yml`)
 
 Runs on every push:
+
 - ✅ Format check (`deno fmt --check`)
 - ✅ Linting (`deno lint`)
 - ✅ Type checking (`deno task check`)
@@ -554,6 +570,7 @@ Runs on every push:
 ### PR Workflow (`.github/workflows/pr.yml`)
 
 Runs on pull requests:
+
 - ✅ Full quality suite (`deno task quality`)
 - ✅ Build verification
 - 📝 Comments on PR if checks fail
@@ -588,6 +605,7 @@ Runs on pull requests:
 ```
 
 **Code statistics:**
+
 - Application code: ~2,800 lines
 - Type definitions: ~1,466 lines
 - Test code: ~1,200 lines
