@@ -29,13 +29,9 @@ jobs:
           path: |
             ~/.deno
             ~/.cache/deno
-            node_modules
           key: ${{ runner.os }}-deno-${{ hashFiles('deno.lock') }}
           restore-keys: |
             ${{ runner.os }}-deno-
-
-      - name: Install dependencies
-        run: deno install
 
       - name: Verify formatting
         run: deno fmt --check
@@ -44,7 +40,7 @@ jobs:
         run: deno lint
 
       - name: Type check
-        run: deno check src/**/*.ts tests/**/*.ts
+        run: deno task check
 
       - name: Run tests
         run: deno task test
@@ -61,7 +57,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   build:
-    name: Build Check
+    name: Build Check (Fresh)
     runs-on: ubuntu-latest
 
     steps:
@@ -73,25 +69,7 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Setup Node.js (for Vite)
-        uses: actions/setup-node@v6
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
       - name: Build project
         run: deno task build
         env:
-          NODE_ENV: production
-
-      - name: Check build output
-        run: |
-          if [ ! -d "dist" ]; then
-            echo "Build failed: dist directory not created"
-            exit 1
-          fi
-          echo "Build successful - dist directory exists"
-          ls -la dist/
+          DENO_ENV: production

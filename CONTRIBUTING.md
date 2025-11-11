@@ -5,7 +5,6 @@ Thank you for your interest in contributing to Discordant! This guide will help 
 ## Prerequisites
 
 - [Deno](https://deno.land/) 2.5 or later
-- [Node.js](https://nodejs.org/) 20 or later (for Vite and npm dependencies)
 - Git
 
 ## Getting Started
@@ -18,15 +17,12 @@ Thank you for your interest in contributing to Discordant! This guide will help 
    cd discordant
    ```
 
-3. **Install dependencies:**
+3. **Run the development server:**
    ```bash
-   npm install  # Install npm dependencies
+   deno task start
    ```
 
-4. **Run the development server:**
-   ```bash
-   deno task dev
-   ```
+   This will start the Fresh development server with hot reload.
 
 ## Development Workflow
 
@@ -160,18 +156,36 @@ deno task check
 
 ```
 discordant/
+├── routes/                # Fresh file-based routes
+│   ├── _app.tsx          # Root layout
+│   └── index.tsx         # Main route
+├── islands/               # Interactive Preact components (hydrated client-side)
+│   ├── LoginIsland.tsx
+│   ├── ChatViewIsland.tsx
+│   └── ...
+├── components/            # Static Preact components (server-side only)
+│   ├── Avatar.tsx
+│   ├── Button.tsx
+│   └── Input.tsx
+├── signals/               # Preact Signals (reactive state)
+│   ├── connection.ts
+│   ├── conversations.ts
+│   └── ...
 ├── src/
 │   ├── lib/
 │   │   ├── xmpp/          # Native XMPP implementation
 │   │   ├── media/         # WebRTC services
 │   │   └── storage/       # File handling
 │   ├── types/             # TypeScript types (union types, not enums!)
-│   ├── stores/            # Svelte stores
-│   ├── components/        # Svelte components
 │   ├── utils/             # Utility functions
 │   └── styles/            # Global styles
+├── static/                # Static assets
+│   └── styles/            # Component CSS
 ├── tests/                 # Unit tests
 ├── e2e/                   # End-to-end tests
+├── fresh.config.ts        # Fresh configuration
+├── dev.ts                 # Dev server entry
+├── main.ts                # Production entry
 └── .github/               # GitHub Actions workflows
 ```
 
@@ -180,7 +194,7 @@ discordant/
 Tests use Deno's built-in test framework:
 
 ```typescript
-import { assertEquals } from 'https://deno.land/std@0.224.0/assert/mod.ts';
+import { assertEquals } from '@std/assert';
 
 Deno.test('feature - does something', () => {
   const result = myFunction('input');
@@ -193,6 +207,25 @@ Test files must:
 - End with `_test.ts`
 - Be in the `tests/` directory
 - Have comprehensive coverage for new features
+
+### Testing Signals
+
+When testing Preact Signals, access values directly:
+
+```typescript
+import { activeConversation } from '@signals/conversations.ts';
+
+Deno.test('signal test', () => {
+  // Read signal value
+  const current = activeConversation.value;
+
+  // Write signal value
+  activeConversationId.value = 'test-123';
+
+  // Computed signals update automatically
+  assertEquals(activeConversation.value?.id, 'test-123');
+});
+```
 
 ## Documentation
 

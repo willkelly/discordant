@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  xmpp:
+    image: prosody/prosody:0.12
+    container_name: discordant-xmpp-test
+    ports:
+      - '5222:5222' # Client to server
+      - '5280:5280' # HTTP (BOSH/WebSocket)
+      - '5281:5281' # HTTP (secure)
+    volumes:
+      - ./test-config/prosody/prosody.cfg.lua:/etc/prosody/prosody.cfg.lua:ro
+      - ./test-config/prosody/certs:/etc/prosody/certs:ro
+    environment:
+      - LOCAL=localhost
+      - DOMAIN=localhost
+      - ADMIN_USER=admin
+      - ADMIN_PASSWORD=admin123
+    healthcheck:
+      test: ['CMD', 'prosodyctl', 'about']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - xmpp-test
+
+networks:
+  xmpp-test:
+    driver: bridge

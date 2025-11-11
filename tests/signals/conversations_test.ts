@@ -1,0 +1,143 @@
+/**
+ * Conversations Signals Tests
+ */
+
+import { assertEquals } from 'https://deno.land/std@0.224.0/assert/mod.ts';
+import {
+  activeConversation,
+  activeConversationId,
+  activeMessages,
+  conversations,
+  messages,
+  sortedConversations,
+} from '../../signals/conversations.ts';
+import type { ChatMessage, Conversation } from '../../src/types/chat.ts';
+
+Deno.test('conversations signals - activeConversation returns null when no active ID', () => {
+  activeConversationId.value = null;
+  const current = activeConversation.value;
+  assertEquals(current, null);
+});
+
+Deno.test('conversations signals - activeConversation returns conversation when ID is set', () => {
+  const testConv: Conversation = {
+    id: 'test-conv',
+    type: 'direct',
+    participants: [],
+    title: 'Test Conversation',
+    unreadCount: 0,
+    isPinned: false,
+    isMuted: false,
+    isArchived: false,
+    createdAt: new Date(),
+    lastActivityAt: new Date(),
+    typingUsers: new Map(),
+  };
+
+  conversations.value = new Map([['test-conv', testConv]]);
+  activeConversationId.value = 'test-conv';
+
+  const current = activeConversation.value;
+  assertEquals(current?.id, 'test-conv');
+  assertEquals(current?.title, 'Test Conversation');
+});
+
+Deno.test('conversations signals - activeMessages returns empty array when no active ID', () => {
+  activeConversationId.value = null;
+  const current = activeMessages.value;
+  assertEquals(current, []);
+});
+
+Deno.test('conversations signals - activeMessages returns messages for active conversation', () => {
+  const testMessage: ChatMessage = {
+    id: 'msg-1',
+    conversationId: 'test-conv',
+    from: {
+      full: 'user@example.com',
+      bare: 'user@example.com',
+      domain: 'example.com',
+      local: 'user',
+    },
+    to: {
+      full: 'other@example.com',
+      bare: 'other@example.com',
+      domain: 'example.com',
+      local: 'other',
+    },
+    direction: 'incoming',
+    contentType: 'text',
+    body: 'Test message',
+    attachments: [],
+    status: 'delivered',
+    timestamp: new Date(),
+    isRead: false,
+    reactions: [],
+    isSystem: false,
+  };
+
+  messages.value = new Map([['test-conv', [testMessage]]]);
+  activeConversationId.value = 'test-conv';
+
+  const current = activeMessages.value;
+  assertEquals(current.length, 1);
+  assertEquals(current[0].body, 'Test message');
+});
+
+Deno.test('conversations signals - sortedConversations sorts by pinned and lastActivity', () => {
+  const conv1: Conversation = {
+    id: 'conv-1',
+    type: 'direct',
+    participants: [],
+    title: 'Conversation 1',
+    unreadCount: 0,
+    isPinned: false,
+    isMuted: false,
+    isArchived: false,
+    createdAt: new Date('2024-01-01'),
+    lastActivityAt: new Date('2024-01-01'),
+    typingUsers: new Map(),
+  };
+
+  const conv2: Conversation = {
+    id: 'conv-2',
+    type: 'direct',
+    participants: [],
+    title: 'Conversation 2',
+    unreadCount: 0,
+    isPinned: true,
+    isMuted: false,
+    isArchived: false,
+    createdAt: new Date('2024-01-02'),
+    lastActivityAt: new Date('2024-01-02'),
+    typingUsers: new Map(),
+  };
+
+  const conv3: Conversation = {
+    id: 'conv-3',
+    type: 'direct',
+    participants: [],
+    title: 'Conversation 3',
+    unreadCount: 0,
+    isPinned: false,
+    isMuted: false,
+    isArchived: false,
+    createdAt: new Date('2024-01-03'),
+    lastActivityAt: new Date('2024-01-03'),
+    typingUsers: new Map(),
+  };
+
+  conversations.value = new Map([
+    ['conv-1', conv1],
+    ['conv-2', conv2],
+    ['conv-3', conv3],
+  ]);
+
+  const sorted = sortedConversations.value;
+
+  // Pinned should be first
+  assertEquals(sorted[0].id, 'conv-2');
+
+  // Then sorted by last activity (most recent first)
+  assertEquals(sorted[1].id, 'conv-3');
+  assertEquals(sorted[2].id, 'conv-1');
+});

@@ -4,8 +4,8 @@
  * Handles audio/video calls using WebRTC.
  */
 
-import { activeCalls, mediaSettings } from '../../stores/calls.ts';
-import type { Call, CallType } from '../../types/media.ts';
+import { activeCalls, mediaSettings } from '../../../signals/calls.ts';
+import type { Call, CallType, MediaSettings } from '../../types/media.ts';
 
 class WebRTCService {
   private peerConnection: RTCPeerConnection | null = null;
@@ -61,10 +61,9 @@ class WebRTCService {
       };
 
       // Add to active calls
-      activeCalls.update((calls) => {
-        calls.set(call.id, call);
-        return calls;
-      });
+      const calls = new Map(activeCalls.value);
+      calls.set(call.id, call);
+      activeCalls.value = calls;
 
       return call;
     } catch (error) {
@@ -82,7 +81,7 @@ class WebRTCService {
       autoGainControl: true,
       videoFrameRate: 30,
     };
-    const unsubscribe = mediaSettings.subscribe((s) => {
+    const unsubscribe = mediaSettings.subscribe((s: MediaSettings) => {
       settings = s;
     });
     unsubscribe();
@@ -109,64 +108,61 @@ class WebRTCService {
    * Toggle audio mute
    */
   toggleAudio(callId: string): void {
-    activeCalls.update((calls) => {
-      const call = calls.get(callId);
-      if (call && call.localStream) {
-        const audioTracks = call.localStream.getAudioTracks();
-        audioTracks.forEach((track) => {
-          track.enabled = !track.enabled;
-        });
-        call.isAudioMuted = !call.isAudioMuted;
-        calls.set(callId, call);
-      }
-      return calls;
-    });
+    const calls = new Map(activeCalls.value);
+    const call = calls.get(callId);
+    if (call && call.localStream) {
+      const audioTracks = call.localStream.getAudioTracks();
+      audioTracks.forEach((track: MediaStreamTrack) => {
+        track.enabled = !track.enabled;
+      });
+      call.isAudioMuted = !call.isAudioMuted;
+      calls.set(callId, call);
+      activeCalls.value = calls;
+    }
   }
 
   /**
    * Toggle video
    */
   toggleVideo(callId: string): void {
-    activeCalls.update((calls) => {
-      const call = calls.get(callId);
-      if (call && call.localStream) {
-        const videoTracks = call.localStream.getVideoTracks();
-        videoTracks.forEach((track) => {
-          track.enabled = !track.enabled;
-        });
-        call.isVideoDisabled = !call.isVideoDisabled;
-        calls.set(callId, call);
-      }
-      return calls;
-    });
+    const calls = new Map(activeCalls.value);
+    const call = calls.get(callId);
+    if (call && call.localStream) {
+      const videoTracks = call.localStream.getVideoTracks();
+      videoTracks.forEach((track: MediaStreamTrack) => {
+        track.enabled = !track.enabled;
+      });
+      call.isVideoDisabled = !call.isVideoDisabled;
+      calls.set(callId, call);
+      activeCalls.value = calls;
+    }
   }
 
   /**
    * End call
    */
   endCall(callId: string): void {
-    activeCalls.update((calls) => {
-      const call = calls.get(callId);
-      if (call) {
-        // Stop local stream
-        call.localStream?.getTracks().forEach((track) => track.stop());
+    const calls = new Map(activeCalls.value);
+    const call = calls.get(callId);
+    if (call) {
+      // Stop local stream
+      call.localStream?.getTracks().forEach((track: MediaStreamTrack) => track.stop());
 
-        // Close peer connection
-        call.peerConnection?.close();
+      // Close peer connection
+      call.peerConnection?.close();
 
-        // Update call state
-        call.state = 'ended' as any;
-        call.endTime = new Date();
-        if (call.startTime && call.endTime) {
-          call.duration = Math.floor(
-            (call.endTime.getTime() - call.startTime.getTime()) / 1000,
-          );
-        }
-
-        calls.delete(callId);
+      // Update call state
+      call.state = 'ended' as any;
+      call.endTime = new Date();
+      if (call.startTime && call.endTime) {
+        call.duration = Math.floor(
+          (call.endTime.getTime() - call.startTime.getTime()) / 1000,
+        );
       }
-      return calls;
-    });
+
+      calls.delete(callId);
+      activeCalls.value = calls;
+    }
   }
 }
 

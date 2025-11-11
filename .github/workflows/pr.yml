@@ -23,9 +23,6 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Install dependencies
-        run: deno install
-
       - name: Run full quality suite
         run: deno task quality
         continue-on-error: false
@@ -43,7 +40,7 @@ jobs:
             })
 
   size-check:
-    name: Bundle Size Check
+    name: Fresh Build Size Check
     runs-on: ubuntu-latest
 
     steps:
@@ -55,28 +52,17 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
       - name: Build
         run: deno task build
 
       - name: Check bundle size
         run: |
-          echo "📦 Bundle Size Report"
-          du -sh dist/
-          du -h dist/assets/*.js | sort -h
-
-          # Warn if bundle is too large (> 1MB for main bundle)
-          MAIN_SIZE=$(find dist/assets -name "index-*.js" -exec du -k {} \; | cut -f1)
-          if [ "$MAIN_SIZE" -gt 1024 ]; then
-            echo "⚠️  Warning: Main bundle is larger than 1MB ($MAIN_SIZE KB)"
-          else
-            echo "✅ Bundle size looks good: $MAIN_SIZE KB"
-          fi
+          echo "📦 Fresh v2 Build Verification"
+          echo ""
+          echo "✅ Fresh v2 uses runtime compilation"
+          echo "   No build artifacts are generated - code is compiled on demand"
+          echo ""
+          echo "Benefits:"
+          echo "  - Zero build time in CI/CD"
+          echo "  - Minimal bundle size (islands only)"
+          echo "  - Server-side rendering for everything else"

@@ -1,12 +1,17 @@
 /**
  * Tests for XML utilities
+ *
+ * Note: Deno doesn't include DOMParser in the runtime (only in browser environments).
+ * We use npm:@xmldom/xmldom via Deno's npm: specifier - this is the Deno way to access
+ * npm packages without needing package.json or node_modules for development.
  */
 
-import { assert, assertEquals, assertThrows } from 'https://deno.land/std@0.224.0/assert/mod.ts';
+import { assert, assertEquals, assertThrows } from '@std/assert';
 
-// Set up DOMParser polyfill for Deno test environment
+// Set up DOMParser for Deno test environment
+// Uses npm: specifier to access @xmldom/xmldom directly from Deno
 if (typeof DOMParser === 'undefined') {
-  // @ts-ignore: Polyfill DOMParser for Deno
+  // @ts-ignore: Polyfill DOMParser for Deno tests
   const { DOMParser: XmlDomParser } = await import('npm:@xmldom/xmldom@^0.8.10');
   // @ts-ignore: Assign to globalThis
   globalThis.DOMParser = XmlDomParser;

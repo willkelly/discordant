@@ -10,44 +10,6 @@ on:
     - cron: '0 0 * * 1'
 
 jobs:
-  security-audit:
-    name: Security Audit
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '20'
-
-      - name: Run npm audit
-        run: npm audit --audit-level=moderate
-        continue-on-error: true
-
-      - name: Check for vulnerable dependencies
-        run: |
-          echo "Checking for known vulnerabilities..."
-          npm audit --json > audit-report.json || true
-
-          # Check if there are any high or critical vulnerabilities
-          HIGH=$(jq '.metadata.vulnerabilities.high' audit-report.json)
-          CRITICAL=$(jq '.metadata.vulnerabilities.critical' audit-report.json)
-
-          echo "High severity vulnerabilities: $HIGH"
-          echo "Critical severity vulnerabilities: $CRITICAL"
-
-          if [ "$CRITICAL" -gt 0 ]; then
-            echo "❌ Critical vulnerabilities found!"
-            exit 1
-          elif [ "$HIGH" -gt 0 ]; then
-            echo "⚠️  High severity vulnerabilities found"
-          else
-            echo "✅ No high or critical vulnerabilities found"
-          fi
-
   codeql:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
