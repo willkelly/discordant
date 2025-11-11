@@ -40,7 +40,7 @@ This project follows **Deno-first development** principles:
 
 ## Technology Stack
 
-- **Runtime:** Deno 2.0+
+- **Runtime:** Deno 2.5+
 - **Language:** TypeScript (strict mode, no `any` types)
 - **Framework:** Svelte 4
 - **Bundler:** Vite (via Deno npm: specifier)

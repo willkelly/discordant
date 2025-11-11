@@ -4,7 +4,7 @@ Thank you for your interest in contributing to Discordant! This guide will help 
 
 ## Prerequisites
 
-- [Deno](https://deno.land/) 1.40 or later
+- [Deno](https://deno.land/) 2.5 or later
 - [Node.js](https://nodejs.org/) 20 or later (for Vite and npm dependencies)
 - Git
 
