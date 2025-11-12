@@ -1,8 +1,11 @@
 #!/usr/bin/env -S deno run -A
 
 import { App } from 'fresh';
+import { dirname, fromFileUrl } from '@std/path';
 
-const app = new App();
+const app = new App({
+  root: dirname(fromFileUrl(import.meta.url)),
+});
 
 // Check if build command was passed
 const isBuildMode = Deno.args.includes('build');
