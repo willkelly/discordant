@@ -3,6 +3,7 @@ _fresh/
 
 # Deno
 deno.lock
+node_modules/
 
 # Environment files
 .env
