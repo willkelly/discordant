@@ -16,13 +16,25 @@ const app = new App();
 // Serve static files middleware
 app.use(staticFiles());
 
-// Manual static file route for CSS (workaround)
-app.get('/styles/global.css', async (_req) => {
-  const css = await Deno.readTextFile('./static/styles/global.css');
-  return new Response(css, {
-    headers: { 'content-type': 'text/css; charset=utf-8' },
-  });
+// Manual static file routes for CSS and other static assets (workaround)
+// Serve any file from /styles/ directory
+app.get('/styles/*', async (req) => {
+  const url = new URL(req.url);
+  const filePath = `./static${url.pathname}`;
+
+  try {
+    const content = await Deno.readTextFile(filePath);
+    const contentType = filePath.endsWith('.css') ? 'text/css; charset=utf-8' : 'text/plain';
+    return new Response(content, {
+      headers: { 'content-type': contentType },
+    });
+  } catch {
+    return new Response('Not Found', { status: 404 });
+  }
 });
+
+// Favicon handler (prevent browser errors)
+app.get('/favicon.ico', () => new Response(null, { status: 204 }));
 
 // Root route
 app.get('/', (_req) => {
