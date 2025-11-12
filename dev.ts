@@ -11,7 +11,7 @@ import { renderToString } from 'preact-render-to-string';
 import { h } from 'preact';
 import AppIsland from './islands/AppIsland.tsx';
 
-const app = new App({ root: import.meta.url });
+const app = new App();
 
 // Serve static files middleware
 app.use(staticFiles());
@@ -25,20 +25,22 @@ app.get('/styles/global.css', async (_req) => {
 });
 
 // Root route
-app.get('/', async (_req) => {
+app.get('/', (_req) => {
   const body = renderToString(
-    h('html', { lang: 'en' },
-      h('head', null,
+    h(
+      'html',
+      { lang: 'en' },
+      h(
+        'head',
+        null,
         h('meta', { charSet: 'utf-8' }),
         h('meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }),
         h('meta', { name: 'description', content: 'Discordant - A modern XMPP chat client' }),
         h('title', null, 'Discordant'),
-        h('link', { rel: 'stylesheet', href: '/styles/global.css' })
+        h('link', { rel: 'stylesheet', href: '/styles/global.css' }),
       ),
-      h('body', null,
-        h(AppIsland, null)
-      )
-    )
+      h('body', null, h(AppIsland, null)),
+    ),
   );
 
   return new Response(`<!DOCTYPE html>${body}`, {
