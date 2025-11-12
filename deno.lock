@@ -3,6 +3,7 @@
   "specifiers": {
     "jsr:@b-fuze/deno-dom@0.1.48": "0.1.48",
     "jsr:@fresh/build-id@1": "1.0.1",
+    "jsr:@fresh/core@*": "2.1.4",
     "jsr:@fresh/core@^2.0.0-beta": "2.1.4",
     "jsr:@std/assert@1": "1.0.15",
     "jsr:@std/assert@^1.0.15": "1.0.15",
