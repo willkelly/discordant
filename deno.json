@@ -12,9 +12,9 @@
     "noUnusedParameters": true
   },
   "imports": {
-    "$fresh/": "jsr:@fresh/core@^2.0.0-beta/",
-    "fresh": "jsr:@fresh/core@^2.0.0-beta",
-    "fresh/": "jsr:@fresh/core@^2.0.0-beta/",
+    "$fresh/": "jsr:@fresh/core@2.1.4/",
+    "fresh": "jsr:@fresh/core@2.1.4",
+    "fresh/": "jsr:@fresh/core@2.1.4/",
     "@fresh/plugin-vite": "jsr:@fresh/plugin-vite@^0.0.2",
     "vite": "npm:vite@^6.0.7",
     "preact": "npm:preact@^10.24.0",

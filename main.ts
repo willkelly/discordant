@@ -3,38 +3,20 @@
 /**
  * Production Server Entry Point
  *
- * Starts the Fresh server with manual routing
- * Note: Fresh 2.0's .fsRoutes() requires Vite integration which currently
- * has compatibility issues. Using manual route registration as a workaround.
+ * Simple Fresh 2.x setup with manual routing
  */
 
-import { App, staticFiles } from 'fresh';
-import { renderToString } from 'npm:preact-render-to-string@^6.6.3';
-import { h } from 'preact';
-
-// Import layouts and routes
+import { App, page } from 'fresh';
 import AppLayout from './routes/_app.tsx';
 import HomePage from './routes/index.tsx';
 
+// Fresh 2.x serves static files from ./static automatically
 const app = new App();
 
-// Add static file serving
-app.use(staticFiles());
+// Register routes using the page() API
+app.get('/', page(HomePage, { layout: AppLayout }));
 
-// Manually register routes
-// Root route
-app.get('/', (_ctx) => {
-  // @ts-ignore - Simplified SSR rendering without full PageProps
-  const html = renderToString(h(AppLayout, {
-    Component: HomePage,
-  }));
-
-  return new Response(
-    `<!DOCTYPE html>${html}`,
-    {
-      headers: { 'content-type': 'text/html; charset=utf-8' },
-    },
-  );
-});
-
-await app.listen();
+// Listen
+if (import.meta.main) {
+  await app.listen();
+}
